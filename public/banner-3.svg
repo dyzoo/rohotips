@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="675" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0a0a0a"/>
+      <stop offset="0.6" stop-color="#1a1410"/>
+      <stop offset="1" stop-color="#332514"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg3)"/>
+  <circle cx="1010" cy="520" r="210" fill="#dcb97f" fill-opacity="0.08"/>
+  <text x="80" y="285" fill="#dcb97f" font-family="Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="5">JIUNGE NA ROHOTIPS</text>
+  <text x="80" y="375" fill="#ffffff" font-family="Arial, sans-serif" font-size="64" font-weight="800">Pata Tips za</text>
+  <text x="80" y="452" fill="#ffffff" font-family="Arial, sans-serif" font-size="64" font-weight="800">Ushindi Bure</text>
+  <rect x="80" y="505" width="250" height="54" rx="27" fill="#dcb97f"/>
+  <text x="205" y="540" text-anchor="middle" fill="#0a0a0a" font-family="Arial, sans-serif" font-size="20" font-weight="800">SAJILI SASA</text>
+</svg>
