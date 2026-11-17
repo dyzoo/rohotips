@@ -11,7 +11,7 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.svg" width={32} height={32} alt="ChampeeTips logo" unoptimized />
+          <Image src="/roho_logo.jpg" width={48} height={32} alt="ChampeeTips logo" unoptimized />
           <span className="page-title">{settings.siteName}</span>
         </Link>
         {user ? (

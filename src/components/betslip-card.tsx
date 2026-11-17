@@ -16,28 +16,30 @@ function VerifiedBadge() {
   );
 }
 
-const logos: Record<string, string> = {
-  BetPawa: "/betpawa.svg",
-  SportyBet: "/sportybet.svg",
-};
-
-function BookmakerChip({ name }: { name: string }) {
-  const logo = logos[name];
+function BookmakerChip({ name, logo }: { name: string; logo?: string }) {
   if (logo) {
     return (
-      <span className="flex h-7 items-center rounded bg-white px-2">
+      <span className="flex h-7 w-[84px] items-center justify-center rounded bg-white px-2">
         <Image src={logo} width={70} height={24} alt={name} className="h-5 w-auto object-contain" unoptimized />
       </span>
     );
   }
   return (
-    <span className="flex h-7 items-center rounded border border-white/10 bg-white/5 px-3 text-[11px] font-bold uppercase tracking-wide text-white/80">
+    <span className="flex h-7 w-[84px] items-center justify-center rounded border border-white/10 bg-white/5 px-2 text-[10px] font-bold uppercase tracking-wide text-white/80">
       {name}
     </span>
   );
 }
 
-export function BetslipCard({ slip, siteName }: { slip: Betslip; siteName: string }) {
+export function BetslipCard({
+  slip,
+  siteName,
+  logos,
+}: {
+  slip: Betslip;
+  siteName: string;
+  logos: Record<string, string>;
+}) {
   return (
     <article className="betslip-card animate-enter mb-6">
       <div className="mb-6 flex items-start justify-between gap-3 border-b border-[#222] pb-5">
@@ -72,7 +74,7 @@ export function BetslipCard({ slip, siteName }: { slip: Betslip; siteName: strin
 
       <div className="mb-6 flex flex-wrap gap-2">
         {slip.bookmakers.map((bookmaker) => (
-          <BookmakerChip key={bookmaker} name={bookmaker} />
+          <BookmakerChip key={bookmaker} name={bookmaker} logo={logos[bookmaker.toLowerCase()]} />
         ))}
       </div>
 

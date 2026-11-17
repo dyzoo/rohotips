@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="border-b border-white/10 bg-black/60">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4">
           <Link href="/admin" className="flex items-center gap-2">
-            <Image src="/logo.svg" width={30} height={30} alt="ChampeeTips logo" unoptimized />
+            <Image src="/roho_logo.jpg" width={45} height={30} alt="ChampeeTips logo" unoptimized />
             <span className="page-title">CHAMPEETIPS ADMIN</span>
           </Link>
           <div className="flex items-center gap-3 text-xs">

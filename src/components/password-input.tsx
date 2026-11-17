@@ -7,11 +7,15 @@ export function PasswordInput({
   id,
   placeholder,
   required = true,
+  className = "input-field pl-7 pr-8",
+  toggleClassName = "right-0 text-black",
 }: {
   name: string;
   id?: string;
   placeholder?: string;
   required?: boolean;
+  className?: string;
+  toggleClassName?: string;
 }) {
   const [visible, setVisible] = useState(false);
 
@@ -22,14 +26,14 @@ export function PasswordInput({
         name={name}
         id={id}
         placeholder={placeholder ?? "•••••••••"}
-        className="input-field pl-7 pr-8"
+        className={className}
         required={required}
       />
       <button
         type="button"
         onClick={() => setVisible((value) => !value)}
         aria-label={visible ? "Hide password" : "Show password"}
-        className="absolute right-0 top-1/2 -translate-y-1/2 text-black"
+        className={`absolute top-1/2 -translate-y-1/2 ${toggleClassName}`}
       >
         {visible ? (
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">

@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { simulatePaymentAction } from "@/app/actions";
 import { CopyButton } from "@/components/copy-button";
 import { PaymentPoller } from "@/components/payment-poller";
-import { csrfToken, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { findOrder, findSlip } from "@/lib/db";
 import { dateLabel, money } from "@/lib/format";
 
@@ -17,7 +16,6 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
   if (!order || order.userId !== user.id) notFound();
 
   const slip = await findSlip(order.slipId);
-  const csrf = await csrfToken();
 
   return (
     <div className="animate-enter">
@@ -87,29 +85,11 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
           </div>
         ) : order.status === "pending" ? (
           <div className="space-y-4">
-            {order.mode === "live" ? (
-              <div className="rounded-2xl border border-gold/20 bg-gold/5 p-4 text-center text-sm text-gold">
-                A payment request was sent to {order.phone}. Enter your M-Pesa PIN to complete the payment.
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-xs leading-relaxed text-white/60">
-                Demo mode is active. Use the button below to simulate a successful payment. Configure the M-Pesa
-                environment variables to switch to live STK push.
-              </div>
-            )}
-
-            {order.mode === "demo" ? (
-              <form action={simulatePaymentAction}>
-                <input type="hidden" name="csrf" value={csrf} />
-                <input type="hidden" name="orderId" value={order.id} />
-                <button
-                  type="submit"
-                  className="gold-gradient w-full rounded-xl py-4 text-sm font-extrabold uppercase tracking-wide text-[#0a0a0a]"
-                >
-                  Simulate successful payment
-                </button>
-              </form>
-            ) : null}
+            <div className="rounded-2xl border border-gold/20 bg-gold/5 p-4 text-center text-sm text-gold">
+              {order.mode === "live"
+                ? `A payment request was sent to ${order.phone}. Enter your M-Pesa PIN to complete the payment.`
+                : "We are confirming your payment. This page will update automatically once it is received."}
+            </div>
 
             <Link
               href="/mybets"

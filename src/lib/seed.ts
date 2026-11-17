@@ -1,5 +1,5 @@
 import { hashPassword, randomId } from "./crypto";
-import type { Betslip, Db } from "./types";
+import type { Betslip, Db, Slider } from "./types";
 
 export const SEED_SLIP_HOURS: Record<string, number> = {
   "1001": 4.3,
@@ -7,6 +7,12 @@ export const SEED_SLIP_HOURS: Record<string, number> = {
   "1003": 26,
   "1004": 50,
 };
+
+export const SEED_MEDIA_SLIDES: Slider[] = [
+  { id: "slide-ronaldo", image: "/ronaldo.jpg", link: "/betslip/1001" },
+  { id: "slide-uefa", image: "/uefa.jpg", link: "/betslip/1002" },
+  { id: "slide-messi", image: "/Messi.png", link: "/betslip/1003" },
+];
 
 function future(hours: number): string {
   return new Date(Date.now() + hours * 3600000).toISOString();
@@ -123,8 +129,10 @@ export function buildSeed(): Db {
       { id: "slide-1", image: "/banner-1.svg", link: "/betslip/1001" },
       { id: "slide-2", image: "/banner-2.svg", link: "/betslip/1002" },
       { id: "slide-3", image: "/banner-3.svg", link: "/register" },
+      ...SEED_MEDIA_SLIDES,
     ],
     resets: [],
+    brandLogos: {},
     settings: {
       siteName: "CHAMPEETIPS",
       supportPhone: "0796184234",

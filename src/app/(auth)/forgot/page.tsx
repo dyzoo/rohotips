@@ -16,8 +16,7 @@ export default async function ForgotPage({
     <AuthShell title="Recover" backHref="/login">
       {sent ? (
         <p className="alert-success mb-5">
-          If an account exists for that email, a reset link has been created. In this demo the link is shown on the
-          next screen only for registered emails.
+          If an account exists for that email, a reset link has been created.
         </p>
       ) : null}
       {error ? <p className="alert-error mb-5">Please enter a valid email and solve the anti-robot question.</p> : null}

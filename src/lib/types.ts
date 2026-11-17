@@ -86,4 +86,6 @@ export interface Db {
   sliders: Slider[];
   resets: ResetToken[];
   settings: Settings;
+  brandLogos: Record<string, string>;
+  carouselMediaSeeded?: boolean;
 }

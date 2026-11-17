@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
-import { buildSeed, SEED_SLIP_HOURS } from "./seed";
+import { buildSeed, SEED_MEDIA_SLIDES, SEED_SLIP_HOURS } from "./seed";
 import type { Betslip, Db, Order, Settings, Slider, User } from "./types";
 
 const globalForDb = globalThis as unknown as { rohotipsPool?: Pool };
@@ -25,6 +25,14 @@ function normalize(db: Db): Db {
   db.resets ??= [];
   db.sessions ??= [];
   db.orders ??= [];
+  db.brandLogos ??= {};
+
+  if (!db.carouselMediaSeeded) {
+    for (const slide of SEED_MEDIA_SLIDES) {
+      if (!db.sliders.some((entry) => entry.id === slide.id)) db.sliders.push(slide);
+    }
+    db.carouselMediaSeeded = true;
+  }
 
   if (db.settings.siteName === "ROHOTIPS") db.settings.siteName = "CHAMPEETIPS";
   if (db.settings.email === "support@rohotips.co.tz") db.settings.email = "support@champeetips.com";
@@ -158,4 +166,9 @@ export async function getSettings(): Promise<Settings> {
 export async function getSliders(): Promise<Slider[]> {
   const db = await readDb();
   return db.sliders;
+}
+
+export async function getBrandLogos(): Promise<Record<string, string>> {
+  const db = await readDb();
+  return db.brandLogos;
 }

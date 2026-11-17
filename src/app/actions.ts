@@ -1,5 +1,7 @@
 "use server";
 
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
@@ -12,7 +14,7 @@ import {
 } from "@/lib/auth";
 import { hashPassword, randomId, verifyPassword } from "@/lib/crypto";
 import { newId, readDb, withDb } from "@/lib/db";
-import { createOrder, markOrderPaid } from "@/lib/payments";
+import { createOrder } from "@/lib/payments";
 import type { Betslip, OrderStatus, PaymentMethod } from "@/lib/types";
 
 function text(formData: FormData, key: string): string {
@@ -22,6 +24,29 @@ function text(formData: FormData, key: string): string {
 
 function safePath(value: string, fallback: string): string {
   return value.startsWith("/") && !/^\/[\\/]/.test(value) ? value : fallback;
+}
+
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+const uploadExtensions: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
+function uploadedFile(formData: FormData, key: string): File | null {
+  const value = formData.get(key);
+  return value instanceof File && value.size > 0 ? value : null;
+}
+
+async function saveUpload(file: File, prefix: string): Promise<string> {
+  const extension = uploadExtensions[file.type];
+  if (!extension) throw new Error("Unsupported image type");
+  if (file.size > MAX_UPLOAD_BYTES) throw new Error("Image is too large");
+  const directory = join(process.cwd(), "public", "uploads");
+  await mkdir(directory, { recursive: true });
+  const filename = `${prefix}-${randomId(8)}.${extension}`;
+  await writeFile(join(directory, filename), Buffer.from(await file.arrayBuffer()));
+  return `/uploads/${filename}`;
 }
 
 export async function loginAction(formData: FormData): Promise<void> {
@@ -151,23 +176,6 @@ export async function payForSlipAction(formData: FormData): Promise<void> {
       target = `/checkout/${order.id}`;
     } catch {
       target = `/betslip/${slipId}?error=payment`;
-    }
-  }
-
-  redirect(target);
-}
-
-export async function simulatePaymentAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
-  const orderId = text(formData, "orderId");
-  const target = `/checkout/${orderId}`;
-
-  if (await verifyCsrf(formData)) {
-    const db = await readDb();
-    const order = db.orders.find((entry) => entry.id === orderId && entry.userId === user.id);
-    if (order && order.mode === "demo" && order.status === "pending") {
-      await markOrderPaid(order.reference, order.checkoutRequestId);
-      revalidatePath("/mybets");
     }
   }
 
@@ -347,6 +355,61 @@ export async function removeSliderAction(formData: FormData): Promise<void> {
       db.sliders = db.sliders.filter((entry) => entry.id !== id);
     });
     revalidatePath("/");
+  }
+  redirect("/admin/settings?saved=1");
+}
+
+export async function uploadSliderAction(formData: FormData): Promise<void> {
+  await requireAdmin();
+  let target = "/admin/settings?error=upload";
+  if (await verifyCsrf(formData)) {
+    const file = uploadedFile(formData, "image");
+    if (file) {
+      try {
+        const image = await saveUpload(file, "slide");
+        await withDb((db) => {
+          db.sliders.push({ id: newId(), image, link: safePath(text(formData, "link"), "/") });
+        });
+        revalidatePath("/");
+        target = "/admin/settings?saved=1";
+      } catch {
+        target = "/admin/settings?error=upload";
+      }
+    }
+  }
+  redirect(target);
+}
+
+export async function uploadBrandLogoAction(formData: FormData): Promise<void> {
+  await requireAdmin();
+  let target = "/admin/settings?error=logo";
+  const name = text(formData, "name");
+  if ((await verifyCsrf(formData)) && name) {
+    const file = uploadedFile(formData, "logo");
+    if (file) {
+      try {
+        const image = await saveUpload(file, "logo");
+        await withDb((db) => {
+          db.brandLogos[name.toLowerCase()] = image;
+        });
+        revalidatePath("/", "layout");
+        target = "/admin/settings?saved=1";
+      } catch {
+        target = "/admin/settings?error=logo";
+      }
+    }
+  }
+  redirect(target);
+}
+
+export async function removeBrandLogoAction(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const name = text(formData, "name").toLowerCase();
+  if ((await verifyCsrf(formData)) && name) {
+    await withDb((db) => {
+      delete db.brandLogos[name];
+    });
+    revalidatePath("/", "layout");
   }
   redirect("/admin/settings?saved=1");
 }

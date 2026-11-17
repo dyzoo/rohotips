@@ -5,7 +5,7 @@ import { payForSlipAction } from "@/app/actions";
 import { CopyButton } from "@/components/copy-button";
 import { Countdown } from "@/components/countdown";
 import { csrfToken, getCurrentUser } from "@/lib/auth";
-import { findSlip, getSettings } from "@/lib/db";
+import { findSlip, getBrandLogos, getSettings } from "@/lib/db";
 import { dateLabel, isExpired, money } from "@/lib/format";
 import { userHasSlip } from "@/lib/payments";
 
@@ -22,7 +22,12 @@ export default async function BetslipPage({
 }) {
   const { id } = await params;
   const { error } = await searchParams;
-  const [slip, user, settings] = await Promise.all([findSlip(id), getCurrentUser(), getSettings()]);
+  const [slip, user, settings, logos] = await Promise.all([
+    findSlip(id),
+    getCurrentUser(),
+    getSettings(),
+    getBrandLogos(),
+  ]);
 
   if (!slip) notFound();
 
@@ -77,14 +82,28 @@ export default async function BetslipPage({
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          {slip.bookmakers.map((bookmaker) => (
-            <span
-              key={bookmaker}
-              className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white/80"
-            >
-              {bookmaker}
-            </span>
-          ))}
+          {slip.bookmakers.map((bookmaker) => {
+            const logo = logos[bookmaker.toLowerCase()];
+            return logo ? (
+              <span key={bookmaker} className="flex h-8 w-[84px] items-center justify-center rounded-lg bg-white px-2">
+                <Image
+                  src={logo}
+                  alt={bookmaker}
+                  width={70}
+                  height={24}
+                  className="h-5 w-auto object-contain"
+                  unoptimized
+                />
+              </span>
+            ) : (
+              <span
+                key={bookmaker}
+                className="flex h-8 w-[84px] items-center justify-center rounded-lg border border-white/10 bg-white/5 px-2 text-[10px] font-bold uppercase tracking-wide text-white/80"
+              >
+                {bookmaker}
+              </span>
+            );
+          })}
         </div>
       </div>
 
