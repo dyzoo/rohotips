@@ -11,15 +11,15 @@ export function CashoutSection({
   const styles = slipTheme[theme];
 
   return (
-    <div className="flex items-center justify-between gap-3 py-1">
-      <div className="flex min-w-0 items-center gap-3">
-        <CashIcon className={`h-5 w-5 shrink-0 ${styles.icon}`} />
-        <span className={`truncate text-[15px] font-semibold ${styles.value}`}>Cashout</span>
+    <div className="flex items-center justify-between gap-2 py-0.5">
+      <div className="flex min-w-0 items-center gap-2">
+        <CashIcon className={`h-4 w-4 shrink-0 ${styles.icon}`} />
+        <span className={`truncate text-[12px] font-semibold ${styles.value}`}>Cashout</span>
       </div>
       <button
         type="button"
         onClick={onRequest}
-        className={`h-10 w-auto shrink-0 rounded-lg px-5 text-[10px] font-bold uppercase tracking-wide transition ${styles.button}`}
+        className={`h-8 w-auto shrink-0 rounded-lg px-4 text-[9px] font-bold uppercase tracking-wide transition ${styles.button}`}
       >
         Request
       </button>

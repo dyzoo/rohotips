@@ -14,11 +14,11 @@ export function FinancialRow({
   const styles = slipTheme[theme];
 
   return (
-    <div className="flex items-center justify-between gap-4 py-2">
-      <span className={`text-[13px] font-medium ${styles.soft}`}>{label}</span>
-      <span className="flex items-baseline justify-end gap-1.5 text-right">
-        {currency ? <span className={`text-[11px] ${styles.muted}`}>{currency}</span> : null}
-        <span className={`text-[15px] font-bold ${styles.value}`}>{value}</span>
+    <div className="flex items-center justify-between gap-3 py-1">
+      <span className={`text-[11px] font-medium ${styles.soft}`}>{label}</span>
+      <span className="flex items-baseline justify-end gap-1 text-right">
+        {currency ? <span className={`text-[10px] ${styles.muted}`}>{currency}</span> : null}
+        <span className={`text-[13px] font-bold ${styles.value}`}>{value}</span>
       </span>
     </div>
   );

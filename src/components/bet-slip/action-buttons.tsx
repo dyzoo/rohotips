@@ -13,19 +13,19 @@ export function BetActionButtons({
   onShare: () => void;
 }) {
   const styles = slipTheme[theme];
-  const buttonClass = `flex h-[52px] items-center justify-center gap-2 rounded-xl border px-3 text-[11px] font-bold uppercase tracking-wide transition ${styles.border} ${styles.value} ${styles.button}`;
+  const buttonClass = `flex h-9 items-center justify-center gap-1.5 rounded-lg border px-2 text-[10px] font-bold uppercase tracking-wide transition ${styles.border} ${styles.value} ${styles.button}`;
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-2">
       <button type="button" onClick={onReuse} className={buttonClass}>
-        <RefreshIcon className="h-4 w-4" />
+        <RefreshIcon className="h-3.5 w-3.5" />
         <span>Re-use</span>
-        <span className={`grid h-5 min-w-5 place-items-center rounded-full px-1 text-[9px] ${styles.badge}`}>
+        <span className={`grid h-4 min-w-4 place-items-center rounded-full px-0.5 text-[8px] ${styles.badge}`}>
           {reuseCount}
         </span>
       </button>
       <button type="button" onClick={onShare} className={buttonClass}>
-        <ShareIcon className="h-4 w-4" />
+        <ShareIcon className="h-3.5 w-3.5" />
         <span>Share</span>
       </button>
     </div>

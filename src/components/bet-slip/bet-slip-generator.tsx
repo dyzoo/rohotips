@@ -15,6 +15,11 @@ function money(value: number): string {
   return formatter.format(Number.isFinite(value) ? value : 0);
 }
 
+function selectionOdds(value: string): number {
+  const odds = Number(value);
+  return Number.isFinite(odds) && odds > 0 ? odds : 1;
+}
+
 const initialMatches: BetSelection[] = [
   {
     id: "match-1",
@@ -39,7 +44,6 @@ const initialMatches: BetSelection[] = [
 export function BetSlipGenerator() {
   const previewRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<BetSlipTheme>("dark");
-  const [oddsInput, setOddsInput] = useState("12.26");
   const [stakeInput, setStakeInput] = useState("500");
   const [bonusInput, setBonusInput] = useState("1456.18");
   const [reuseCount, setReuseCount] = useState(11);
@@ -48,14 +52,14 @@ export function BetSlipGenerator() {
   const [toast, setToast] = useState("");
 
   const values = useMemo(() => {
-    const odds = Math.max(0, Number(oddsInput) || 0);
+    const odds = matches.reduce((total, match) => total * selectionOdds(match.odds), 1);
     const stake = Math.max(0, Number(stakeInput) || 0);
     const bonus = Math.max(0, Number(bonusInput) || 0);
     const winnings = stake * Math.max(odds - 1, 0);
     const tax = (winnings + bonus) * 0.15;
     const payout = stake + winnings + bonus - tax;
     return { odds, stake, bonus, winnings, tax, payout };
-  }, [oddsInput, stakeInput, bonusInput]);
+  }, [matches, stakeInput, bonusInput]);
 
   useEffect(() => {
     if (!toast) return;
@@ -173,17 +177,15 @@ export function BetSlipGenerator() {
       <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
         <div className="panel space-y-5 p-5">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-            <label className="block">
-              <span className="field-label">Odds</span>
-              <input
-                type="number"
-                min="1"
-                step="0.01"
-                value={oddsInput}
-                onChange={(event) => setOddsInput(event.target.value)}
-                className="field num"
-              />
-            </label>
+            <div className="block">
+              <span className="field-label">Total odds (auto)</span>
+              <div className="field num flex items-center justify-between gap-2">
+                <span>{values.odds.toFixed(2)}</span>
+                <span className="text-[10px] font-normal text-white/40">
+                  {matches.length} selection{matches.length === 1 ? "" : "s"}
+                </span>
+              </div>
+            </div>
             <label className="block">
               <span className="field-label">Stake (TSH)</span>
               <input
@@ -221,13 +223,14 @@ export function BetSlipGenerator() {
           <div className="rounded-xl border border-white/[0.07] bg-black/20 p-4">
             <p className="field-label">Calculated figures</p>
             <div className="space-y-2 font-mono text-[11px] text-white/50">
+              <p>TOTAL ODDS: {values.odds.toFixed(2)}</p>
               <p>POTENTIAL WINNINGS: TSH {money(values.winnings)}</p>
               <p>WITHHOLDING TAX 15%: TSH {money(values.tax)}</p>
               <p>PAYOUT: TSH {money(values.payout)}</p>
             </div>
             <p className="mt-3 text-[10px] leading-relaxed text-white/30">
-              Winnings = stake × (odds − 1). Tax = 15% of winnings + bonus. Payout = stake +
-              winnings + bonus − tax.
+              Total odds = product of all selection odds. Winnings = stake × (odds − 1). Tax = 15%
+              of winnings + bonus. Payout = stake + winnings + bonus − tax.
             </p>
           </div>
 
@@ -269,6 +272,9 @@ export function BetSlipGenerator() {
                   <label className="block">
                     <span className="field-label">Match odds</span>
                     <input
+                      type="number"
+                      min="1"
+                      step="0.01"
                       value={match.odds}
                       onChange={(event) => updateMatch(match.id, { odds: event.target.value })}
                       className="field num"
