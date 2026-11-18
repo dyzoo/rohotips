@@ -24,7 +24,13 @@ export default async function EditSlipPage({
       action={updateSlipAction}
       csrf={csrf}
       slip={slip}
-      error={error ? "Check the title and validity date, then try again." : undefined}
+      error={
+        error === "upload"
+          ? "The logo could not be uploaded. Use a PNG, JPEG or WebP image under 4 MB."
+          : error
+            ? "Check the title and validity date, then try again."
+            : undefined
+      }
     />
   );
 }

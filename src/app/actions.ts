@@ -1,7 +1,5 @@
 "use server";
 
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
@@ -27,11 +25,7 @@ function safePath(value: string, fallback: string): string {
 }
 
 const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
-const uploadExtensions: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
+const uploadMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function uploadedFile(formData: FormData, key: string): File | null {
   const value = formData.get(key);
@@ -39,24 +33,19 @@ function uploadedFile(formData: FormData, key: string): File | null {
 }
 
 async function saveUpload(file: File, prefix: string): Promise<string> {
-  const extension = uploadExtensions[file.type];
-  if (!extension) throw new Error("Unsupported image type");
+  if (!uploadMimeTypes.has(file.type)) throw new Error("Unsupported image type");
   if (file.size > MAX_UPLOAD_BYTES) throw new Error("Image is too large");
-  const directory = join(process.cwd(), "public", "uploads");
-  await mkdir(directory, { recursive: true });
-  const filename = `${prefix}-${randomId(8)}.${extension}`;
-  await writeFile(join(directory, filename), Buffer.from(await file.arrayBuffer()));
-  return `/uploads/${filename}`;
+  const id = `${prefix}-${randomId(12)}`;
+  const data = Buffer.from(await file.arrayBuffer()).toString("base64");
+  await withDb((db) => {
+    db.media.push({ id, mime: file.type, data, createdAt: new Date().toISOString() });
+  });
+  return `/api/media/${id}`;
 }
 
 async function saveSlipLogo(formData: FormData): Promise<string | null> {
   const file = uploadedFile(formData, "bookmakerLogo");
-  if (!file) return null;
-  try {
-    return await saveUpload(file, "bookmaker");
-  } catch {
-    return null;
-  }
+  return file ? saveUpload(file, "bookmaker") : null;
 }
 
 export async function loginAction(formData: FormData): Promise<void> {
@@ -236,14 +225,18 @@ export async function createSlipAction(formData: FormData): Promise<void> {
   if (await verifyCsrf(formData)) {
     const id = newId();
     const slip = parseSlip(formData, id);
-    const logo = await saveSlipLogo(formData);
-    if (slip.title && slip.category && slip.odds > 0 && slip.price > 0 && Number.isFinite(new Date(slip.validity).getTime())) {
-      await withDb((db) => {
-        db.slips.push({ ...slip, logo: logo ?? slip.logo, createdAt: new Date().toISOString() });
-      });
-      revalidatePath("/", "layout");
-      revalidatePath("/admin/slips");
-      target = "/admin/slips?saved=created";
+    try {
+      const logo = await saveSlipLogo(formData);
+      if (slip.title && slip.category && slip.odds > 0 && slip.price > 0 && Number.isFinite(new Date(slip.validity).getTime())) {
+        await withDb((db) => {
+          db.slips.push({ ...slip, logo: logo ?? slip.logo, createdAt: new Date().toISOString() });
+        });
+        revalidatePath("/", "layout");
+        revalidatePath("/admin/slips");
+        target = "/admin/slips?saved=created";
+      }
+    } catch {
+      target = "/admin/slips/new?error=upload";
     }
   }
   redirect(target);
@@ -255,25 +248,29 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
   let target = `/admin/slips/${id}/edit?error=invalid`;
   if (await verifyCsrf(formData)) {
     const updated = parseSlip(formData, id);
-    const logo = await saveSlipLogo(formData);
-    if (
-      updated.title &&
-      updated.category &&
-      updated.odds > 0 &&
-      updated.price > 0 &&
-      Number.isFinite(new Date(updated.validity).getTime())
-    ) {
-      const found = await withDb((db) => {
-        const index = db.slips.findIndex((entry) => entry.id === id);
-        if (index < 0) return false;
-        db.slips[index] = { ...updated, logo: logo ?? updated.logo, createdAt: db.slips[index].createdAt };
-        return true;
-      });
-      if (found) {
-        revalidatePath("/", "layout");
-        revalidatePath("/admin/slips");
-        target = "/admin/slips?saved=updated";
+    try {
+      const logo = await saveSlipLogo(formData);
+      if (
+        updated.title &&
+        updated.category &&
+        updated.odds > 0 &&
+        updated.price > 0 &&
+        Number.isFinite(new Date(updated.validity).getTime())
+      ) {
+        const found = await withDb((db) => {
+          const index = db.slips.findIndex((entry) => entry.id === id);
+          if (index < 0) return false;
+          db.slips[index] = { ...updated, logo: logo ?? updated.logo, createdAt: db.slips[index].createdAt };
+          return true;
+        });
+        if (found) {
+          revalidatePath("/", "layout");
+          revalidatePath("/admin/slips");
+          target = "/admin/slips?saved=updated";
+        }
       }
+    } catch {
+      target = `/admin/slips/${id}/edit?error=upload`;
     }
   }
   redirect(target);

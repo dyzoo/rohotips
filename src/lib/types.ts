@@ -55,6 +55,13 @@ export interface Order {
   paidAt?: string;
 }
 
+export interface MediaAsset {
+  id: string;
+  mime: string;
+  data: string;
+  createdAt: string;
+}
+
 export interface Slider {
   id: string;
   image: string;
@@ -78,6 +85,7 @@ export interface Db {
   orders: Order[];
   sliders: Slider[];
   resets: ResetToken[];
+  media: MediaAsset[];
   settings: Settings;
   brandLogos: Record<string, string>;
   carouselMediaSeeded?: boolean;

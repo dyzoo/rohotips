@@ -15,7 +15,13 @@ export default async function NewSlipPage({
     <SlipForm
       action={createSlipAction}
       csrf={csrf}
-      error={error ? "Check the title, category, odds, price and validity date." : undefined}
+      error={
+        error === "upload"
+          ? "The logo could not be uploaded. Use a PNG, JPEG or WebP image under 4 MB."
+          : error
+            ? "Check the title, category, odds, price and validity date."
+            : undefined
+      }
     />
   );
 }

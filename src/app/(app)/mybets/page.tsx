@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Countdown } from "@/components/countdown";
 import { requireUser } from "@/lib/auth";
-import { readDb } from "@/lib/db";
+import { isSlipVisibleToUsers, readDb } from "@/lib/db";
 import { dateLabel, money } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +17,11 @@ export default async function MyBetsPage() {
   const slips = new Map(db.slips.map((slip) => [slip.id, slip]));
   const paid = orders.filter((order) => order.status === "paid");
   const pending = orders.filter((order) => order.status === "pending");
+  const now = Date.now();
+  const visiblePaid = paid.filter((order) => {
+    const slip = slips.get(order.slipId);
+    return slip ? isSlipVisibleToUsers(slip, now) : false;
+  });
 
   return (
     <div className="animate-enter">
@@ -45,18 +50,18 @@ export default async function MyBetsPage() {
             <p className="eyebrow">Section 01</p>
             <h2>Unlocked slips</h2>
           </div>
-          <span className="count-badge">{String(paid.length).padStart(2, "0")}</span>
+          <span className="count-badge">{String(visiblePaid.length).padStart(2, "0")}</span>
         </div>
-        {paid.length === 0 ? (
+        {visiblePaid.length === 0 ? (
           <div className="panel-plain p-6 text-center text-sm text-white/40">
-            You have not unlocked any betslip yet.{" "}
+            You have no active unlocked betslip yet.{" "}
             <Link href="/" className="font-bold text-gold">
               Browse tips
             </Link>
           </div>
         ) : (
           <div className="space-y-3">
-            {paid.map((order) => {
+            {visiblePaid.map((order) => {
               const slip = slips.get(order.slipId);
               return (
                 <Link key={order.id} href={`/betslip/${order.slipId}`} className="card block p-5">

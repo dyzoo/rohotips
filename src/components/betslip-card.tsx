@@ -6,12 +6,15 @@ import { Countdown } from "./countdown";
 
 function VerifiedBadge() {
   return (
-    <svg viewBox="0 0 24 24" width="14" height="14" aria-label="Verified" className="shrink-0 text-gold">
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-label="Verified" className="shrink-0">
       <path
-        d="M12 2l2.3 1.7 2.8-.2 1 2.6 2.3 1.6-.8 2.7.8 2.7-2.3 1.6-1 2.6-2.8-.2L12 22l-2.3-1.7-2.8.2-1-2.6L3.6 16l.8-2.7-.8-2.7 2.3-1.6 1-2.6 2.8.2z"
-        fill="currentColor"
+        d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81C14.67 2.63 13.43 1.75 12 1.75s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.27 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34z"
+        fill="#1d9bf0"
       />
-      <path d="M8.5 12.2l2.3 2.3 4.7-4.9" fill="none" stroke="#0a0a0a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M10.7 15.9l-3.6-3.6 1.4-1.4 2.2 2.2 5-5 1.4 1.4-6.4 6.4z"
+        fill="#fff"
+      />
     </svg>
   );
 }

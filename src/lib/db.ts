@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { buildSeed, SEED_MEDIA_SLIDES, SEED_SLIP_HOURS } from "./seed";
-import type { Betslip, Db, Order, Settings, Slider, User } from "./types";
+import type { Betslip, Db, MediaAsset, Order, Settings, Slider, User } from "./types";
 
 const globalForDb = globalThis as unknown as { rohotipsPool?: Pool };
 let schemaReady: Promise<void> | null = null;
@@ -25,6 +25,7 @@ function normalize(db: Db): Db {
   db.resets ??= [];
   db.sessions ??= [];
   db.orders ??= [];
+  db.media ??= [];
   db.brandLogos ??= {};
   db.settings.adminName ??= "Roho Admin";
   db.settings.adminAvatar ??= "/avatar.svg";
@@ -152,17 +153,26 @@ export async function findUserById(id: string): Promise<User | undefined> {
   return db.users.find((user) => user.id === id);
 }
 
+export function isSlipVisibleToUsers(slip: Betslip, now = Date.now()): boolean {
+  return slip.status === "active" && new Date(slip.validity).getTime() > now;
+}
+
 export async function findActiveSlips(): Promise<Betslip[]> {
   const db = await readDb();
   const now = Date.now();
   return db.slips
-    .filter((slip) => slip.status === "active" && new Date(slip.validity).getTime() > now)
+    .filter((slip) => isSlipVisibleToUsers(slip, now))
     .sort((a, b) => new Date(a.validity).getTime() - new Date(b.validity).getTime());
 }
 
 export async function findSlip(id: string): Promise<Betslip | undefined> {
   const db = await readDb();
   return db.slips.find((slip) => slip.id === id);
+}
+
+export async function findMedia(id: string): Promise<MediaAsset | undefined> {
+  const db = await readDb();
+  return db.media.find((asset) => asset.id === id);
 }
 
 export async function findOrder(id: string): Promise<Order | undefined> {

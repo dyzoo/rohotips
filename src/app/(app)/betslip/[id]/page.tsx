@@ -5,7 +5,7 @@ import { payForSlipAction } from "@/app/actions";
 import { CopyButton } from "@/components/copy-button";
 import { Countdown } from "@/components/countdown";
 import { csrfToken, getCurrentUser } from "@/lib/auth";
-import { findSlip, getSettings } from "@/lib/db";
+import { findSlip, getSettings, isSlipVisibleToUsers } from "@/lib/db";
 import { dateLabel, isExpired, money } from "@/lib/format";
 import { userHasSlip } from "@/lib/payments";
 
@@ -26,7 +26,7 @@ export default async function BetslipPage({
     getSettings(),
   ]);
 
-  if (!slip) notFound();
+  if (!slip || !isSlipVisibleToUsers(slip)) notFound();
 
   const purchased = user ? await userHasSlip(user.id, slip.id) : false;
   const expired = isExpired(slip.validity);
@@ -121,6 +121,24 @@ export default async function BetslipPage({
             </div>
             <span className="num text-xl font-bold text-gold">{money(slip.price)}</span>
           </div>
+          {user ? (
+            <div className="mt-5 rounded-xl border border-white/[0.08] bg-black/25 p-4 text-center">
+              <p className="eyebrow !text-[9px]">Booking code preview</p>
+              <div className="mt-2 flex items-center justify-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className="num select-none text-xl font-bold tracking-widest text-white/45 blur-[6px] sm:text-2xl"
+                >
+                  {slip.code.replace(/[A-Za-z0-9]/g, "8")}
+                </span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 text-gold" aria-hidden="true">
+                  <rect x="5" y="10" width="14" height="10" rx="2" />
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3" strokeLinecap="round" />
+                </svg>
+              </div>
+              <p className="mt-2 text-[11px] text-white/35">Pay to reveal the full code.</p>
+            </div>
+          ) : null}
           <p className="mt-3 text-sm leading-relaxed text-white/45">
             Lipia {money(slip.price)} kupata booking code kamili.
           </p>

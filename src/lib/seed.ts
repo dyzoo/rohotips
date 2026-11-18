@@ -78,6 +78,7 @@ export function buildSeed(): Db {
       ...SEED_MEDIA_SLIDES,
     ],
     resets: [],
+    media: [],
     brandLogos: {},
     settings: {
       siteName: "ROHO TIPS",

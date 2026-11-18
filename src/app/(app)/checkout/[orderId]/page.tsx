@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { CopyButton } from "@/components/copy-button";
 import { PaymentPoller } from "@/components/payment-poller";
 import { requireUser } from "@/lib/auth";
-import { findOrder, findSlip } from "@/lib/db";
+import { findOrder, findSlip, isSlipVisibleToUsers } from "@/lib/db";
 import { dateLabel, money } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +16,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
   if (!order || order.userId !== user.id) notFound();
 
   const slip = await findSlip(order.slipId);
+  const slipVisible = slip ? isSlipVisibleToUsers(slip) : false;
 
   return (
     <div className="animate-enter">
@@ -55,20 +56,31 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
 
         {order.status === "paid" ? (
           <div className="space-y-4">
-            <div className="alert-success text-center">
-              Payment received. Your betslip is unlocked.
-            </div>
-            {slip ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold/30 bg-gold/[0.06] p-4">
-                <div>
-                  <p className="eyebrow !text-[9px]">Booking code</p>
-                  <p className="num mt-1 text-xl font-bold tracking-widest text-gold">{slip.code}</p>
+            {slipVisible ? (
+              <>
+                <div className="alert-success text-center">
+                  Payment received. Your betslip is unlocked.
                 </div>
-                <CopyButton value={slip.code} />
+                {slip ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold/30 bg-gold/[0.06] p-4">
+                    <div>
+                      <p className="eyebrow !text-[9px]">Booking code</p>
+                      <p className="num mt-1 text-xl font-bold tracking-widest text-gold">{slip.code}</p>
+                    </div>
+                    <CopyButton value={slip.code} />
+                  </div>
+                ) : null}
+                <Link href={`/betslip/${order.slipId}`} className="btn-gold">
+                  View unlocked slip
+                </Link>
+              </>
+            ) : (
+              <div className="alert-error text-center">
+                This betslip has already started and is no longer available.
               </div>
-            ) : null}
-            <Link href={`/betslip/${order.slipId}`} className="btn-gold">
-              View unlocked slip
+            )}
+            <Link href="/mybets" className="btn-outline">
+              Check my bets
             </Link>
           </div>
         ) : order.status === "pending" ? (
