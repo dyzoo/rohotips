@@ -33,12 +33,12 @@ export function PaymentUnlockButton({
         }}
       >
         <div className="rounded-[18px] border border-gold/25 bg-panel-light p-5 shadow-2xl">
-          <p className="eyebrow !text-[9px]">M-Pesa payment</p>
+    
           <h2 id="payment-phone-title" className="mt-1 text-lg font-extrabold tracking-tight text-white">
             Enter payment number
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-white/45">
-            We will send the HarakaPay prompt to this number.
+            USSD push will be sent to this number.
           </p>
 
           <form action={payForSlipAction} className="mt-4 space-y-3">
