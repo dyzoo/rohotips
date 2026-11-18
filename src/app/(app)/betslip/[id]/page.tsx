@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { payForSlipAction } from "@/app/actions";
 import { VerifiedBadge } from "@/components/betslip-card";
 import { CopyButton } from "@/components/copy-button";
 import { Countdown } from "@/components/countdown";
+import { PaymentUnlockButton } from "@/components/payment-unlock-button";
 import { csrfToken, requireUser } from "@/lib/auth";
 import { findSlip, getSettings, isSlipVisibleToUsers } from "@/lib/db";
 import { isExpired, money } from "@/lib/format";
@@ -124,7 +124,7 @@ export default async function BetslipPage({
             </Link>
           </div>
         ) : (
-          <div className="mt-5 rounded-[13px] border border-white/[0.08] bg-black/25 p-2.5">
+          <div className="mt-5 rounded-[13px] border border-white/[0.08] bg-black/25 p-3.5">
             <div className="flex flex-col items-center text-center">
               <div className="flex items-center justify-center gap-2 text-gold">
                 <svg
@@ -140,38 +140,23 @@ export default async function BetslipPage({
                   <rect x="5" y="10" width="14" height="10" rx="2" />
                   <path d="M8 10V7a4 4 0 0 1 8 0v3" strokeLinecap="round" />
                 </svg>
-                <span className="eyebrow !text-[9px]">Booking code locked</span>
+                <span className="eyebrow !text-[10px]">Booking code locked</span>
               </div>
               <span
                 aria-hidden="true"
-                className="num mt-1 select-none text-base font-bold tracking-widest text-white/45 blur-[6px]"
+                className="num mt-1 select-none text-lg font-bold tracking-widest text-white/45 blur-[6px]"
               >
                 {slip.code.replace(/[A-Za-z0-9]/g, "8")}
               </span>
             </div>
 
-            <form action={payForSlipAction} className="mt-2 space-y-2">
-              <input type="hidden" name="csrf" value={csrf} />
-              <input type="hidden" name="slipId" value={slip.id} />
-
-              <label htmlFor="phone" className="sr-only">
-                Ingiza Namba ya Malipo
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputMode="tel"
-                placeholder="07XX XXX XXX"
-                pattern="[0-9+ ()-]{9,}"
-                className="field betslip-phone-field text-center"
-                required
+            <div className="mt-3">
+              <PaymentUnlockButton
+                slipId={slip.id}
+                csrf={csrf}
+                amountLabel={money(slip.price)}
               />
-
-              <button type="submit" className="btn-gold betslip-pay-button">
-                Pay {money(slip.price)} to Unlock
-              </button>
-            </form>
+            </div>
           </div>
         )}
       </div>

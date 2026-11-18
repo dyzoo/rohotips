@@ -198,10 +198,10 @@ textarea:focus-visible {
 }
 
 .betslip-pay-button {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 20px;
-  font-size: 11px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 21px;
+  font-size: 13px;
 }
 
 .btn-outline {
@@ -256,13 +256,6 @@ textarea:focus-visible {
   border-color: rgba(220, 185, 127, 0.6);
   background: rgba(0, 0, 0, 0.45);
   box-shadow: 0 0 0 4px rgba(220, 185, 127, 0.1);
-}
-
-.betslip-phone-field {
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 10px;
-  font-size: 11px;
 }
 
 .field-label {
@@ -569,6 +562,20 @@ table.admin-table tbody tr {
 
 table.admin-table tbody tr:hover {
   background: rgba(220, 185, 127, 0.04);
+}
+
+.payment-dialog {
+  width: min(100% - 32px, 380px);
+  max-width: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.payment-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
 }
 
 @media (max-width: 640px) {
