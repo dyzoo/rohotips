@@ -1,5 +1,7 @@
+import Image from "next/image";
 import type { Betslip } from "@/lib/types";
 import { defaultValidityInput } from "@/lib/format";
+import { ImageCropUpload } from "./image-crop-upload";
 
 function toLocalInput(iso: string): string {
   const date = new Date(iso);
@@ -28,13 +30,14 @@ export function SlipForm({
       <h1 className="mt-1 text-2xl font-black tracking-tight text-white">
         {slip ? "Edit betslip" : "New betslip"}
       </h1>
-      <p className="mb-6 mt-1 text-xs text-white/40">Set the slip details and the logo shown to customers.</p>
+      <p className="mb-6 mt-1 text-xs text-white/40">Set the slip details and upload the logo shown to customers.</p>
 
       {error ? <p className="alert-error mb-4">{error}</p> : null}
 
       <form action={action} encType="multipart/form-data" className="panel space-y-5 p-5 sm:p-6">
         <input type="hidden" name="csrf" value={csrf} />
         {slip ? <input type="hidden" name="id" value={slip.id} /> : null}
+        <input type="hidden" name="existingLogo" value={slip?.logo ?? ""} />
 
         <div className="grid gap-5 md:grid-cols-2">
           <label className="block">
@@ -74,29 +77,28 @@ export function SlipForm({
             <span className="field-label">Booking code</span>
             <input name="code" defaultValue={slip?.code ?? ""} placeholder="Auto-generated if empty" className="field num" />
           </label>
-
-          <label className="block">
-            <span className="field-label">Bookmakers</span>
-            <input name="bookmakers" defaultValue={slip?.bookmakers.join(", ") ?? "BetPawa"} placeholder="BetPawa, SportyBet" className="field" />
-          </label>
         </div>
 
-        <div className="grid gap-4 rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 sm:grid-cols-2">
-          <label className="block">
-            <span className="field-label">Bookmaker logo name</span>
-            <input name="bookmakerName" placeholder="BetPawa" className="field" />
-            <span className="mt-2 block text-[11px] text-white/35">Use the same name as in Bookmakers.</span>
-          </label>
-          <label className="block">
-            <span className="field-label">Upload small logo</span>
-            <input
-              type="file"
-              name="bookmakerLogo"
-              accept="image/jpeg,image/png,image/webp"
-              className="field !py-2.5 !text-xs file:mr-3 file:rounded-md file:border-0 file:bg-gold/20 file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:text-gold"
-            />
-          </label>
-        </div>
+        {slip?.logo ? (
+          <div className="flex items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-3">
+            <span className="flex h-10 w-24 shrink-0 items-center justify-center rounded bg-white px-2">
+              <Image src={slip.logo} alt="Current logo" width={80} height={26} className="h-6 w-auto object-contain" unoptimized />
+            </span>
+            <span className="text-xs text-white/45">
+              Current logo. Upload a new one to replace it.
+            </span>
+          </div>
+        ) : null}
+
+        <ImageCropUpload
+          name="bookmakerLogo"
+          label="Upload bookmaker logo"
+          aspect={3}
+          defaultWidth={360}
+          minWidth={180}
+          maxWidth={720}
+          hint="Resize and crop the logo before saving it with this betslip."
+        />
 
         <div className="flex flex-wrap gap-3 pt-1">
           <button type="submit" className="btn-gold !w-auto min-w-48">

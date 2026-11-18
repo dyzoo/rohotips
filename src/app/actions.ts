@@ -49,12 +49,11 @@ async function saveUpload(file: File, prefix: string): Promise<string> {
   return `/uploads/${filename}`;
 }
 
-async function saveBookmakerLogo(formData: FormData): Promise<{ name: string; image: string } | null> {
-  const name = text(formData, "bookmakerName").toLowerCase();
+async function saveSlipLogo(formData: FormData): Promise<string | null> {
   const file = uploadedFile(formData, "bookmakerLogo");
-  if (!name || !file) return null;
+  if (!file) return null;
   try {
-    return { name, image: await saveUpload(file, "bookmaker") };
+    return await saveUpload(file, "bookmaker");
   } catch {
     return null;
   }
@@ -203,10 +202,7 @@ export async function orderStatusAction(
 }
 
 function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
-  const bookmakers = text(formData, "bookmakers")
-    .split(",")
-    .map((entry) => entry.trim())
-    .filter(Boolean);
+  const existingLogo = text(formData, "existingLogo");
   const rawValidity = text(formData, "validity");
   const parsedValidity = rawValidity ? new Date(rawValidity) : new Date(Number.NaN);
   const validity = Number.isFinite(parsedValidity.getTime()) ? parsedValidity.toISOString() : "";
@@ -218,7 +214,7 @@ function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
     odds: Number(text(formData, "odds")) || 0,
     price: Number(text(formData, "price")) || 0,
     validity,
-    bookmakers,
+    logo: existingLogo || undefined,
     status: text(formData, "status") === "inactive" ? "inactive" : "active",
   };
 }
@@ -229,11 +225,10 @@ export async function createSlipAction(formData: FormData): Promise<void> {
   if (await verifyCsrf(formData)) {
     const id = newId();
     const slip = parseSlip(formData, id);
-    const logo = await saveBookmakerLogo(formData);
+    const logo = await saveSlipLogo(formData);
     if (slip.title && slip.category && slip.odds > 0 && slip.price > 0 && Number.isFinite(new Date(slip.validity).getTime())) {
       await withDb((db) => {
-        db.slips.push({ ...slip, createdAt: new Date().toISOString() });
-        if (logo) db.brandLogos[logo.name] = logo.image;
+        db.slips.push({ ...slip, logo: logo ?? slip.logo, createdAt: new Date().toISOString() });
       });
       revalidatePath("/", "layout");
       revalidatePath("/admin/slips");
@@ -249,7 +244,7 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
   let target = `/admin/slips/${id}/edit?error=invalid`;
   if (await verifyCsrf(formData)) {
     const updated = parseSlip(formData, id);
-    const logo = await saveBookmakerLogo(formData);
+    const logo = await saveSlipLogo(formData);
     if (
       updated.title &&
       updated.category &&
@@ -260,8 +255,7 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
       const found = await withDb((db) => {
         const index = db.slips.findIndex((entry) => entry.id === id);
         if (index < 0) return false;
-        db.slips[index] = { ...updated, createdAt: db.slips[index].createdAt };
-        if (logo) db.brandLogos[logo.name] = logo.image;
+        db.slips[index] = { ...updated, logo: logo ?? updated.logo, createdAt: db.slips[index].createdAt };
         return true;
       });
       if (found) {

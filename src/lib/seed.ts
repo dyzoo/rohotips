@@ -25,7 +25,6 @@ function slip(
   odds: number,
   price: number,
   hours: number,
-  bookmakers: string[],
 ): Betslip {
   return {
     id,
@@ -35,7 +34,6 @@ function slip(
     odds,
     price,
     validity: future(SEED_SLIP_HOURS[id] ?? hours),
-    bookmakers,
     status: "active",
     createdAt: new Date().toISOString(),
   };
@@ -67,10 +65,10 @@ export function buildSeed(): Db {
     ],
     sessions: [],
     slips: [
-      slip("1001", "Jamvi la Uhakika", "Jamvi la Leo", 10.05, 6000, 4.3, ["BetPawa"]),
-      slip("1002", "Kiberenge ya Siku", "Kiberenge", 40.87, 7000, 7.3, ["BetPawa"]),
-      slip("1003", "Booking Code Special", "Booking Code", 6.5, 5000, 26, ["SportyBet", "BetPawa"]),
-      slip("1004", "Odds Kubwa za Wiki", "Odds Kubwa", 18.2, 10000, 50, ["BetPawa"]),
+      slip("1001", "Jamvi la Uhakika", "Jamvi la Leo", 10.05, 6000, 4.3),
+      slip("1002", "Kiberenge ya Siku", "Kiberenge", 40.87, 7000, 7.3),
+      slip("1003", "Booking Code Special", "Booking Code", 6.5, 5000, 26),
+      slip("1004", "Odds Kubwa za Wiki", "Odds Kubwa", 18.2, 10000, 50),
     ],
     orders: [],
     sliders: [

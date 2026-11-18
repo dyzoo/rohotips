@@ -20,12 +20,10 @@ export function BetslipCard({
   slip,
   adminName,
   adminAvatar,
-  logos,
 }: {
   slip: Betslip;
   adminName: string;
   adminAvatar: string;
-  logos: Record<string, string>;
 }) {
   return (
     <article className="card animate-enter flex flex-col p-5">
@@ -64,20 +62,13 @@ export function BetslipCard({
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
+      <div className="mt-5 flex min-h-6 flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
         <span className="text-[11px] text-white/40">
           Closes in <Countdown validity={slip.validity} />
         </span>
-        <span className="flex items-center gap-2">
-          {slip.bookmakers.map((bookmaker) => {
-            const logo = logos[bookmaker.toLowerCase()];
-            return logo ? (
-              <Image key={bookmaker} src={logo} width={56} height={20} alt={bookmaker} className="h-5 w-auto object-contain" unoptimized />
-            ) : (
-              <span key={bookmaker} className="text-[10px] font-bold uppercase tracking-wide text-white/45">{bookmaker}</span>
-            );
-          })}
-        </span>
+        {slip.logo ? (
+          <Image src={slip.logo} alt="" width={84} height={28} className="h-6 w-auto object-contain" unoptimized />
+        ) : null}
       </div>
 
       <Link href={`/betslip/${slip.id}`} className="btn-gold mt-5">

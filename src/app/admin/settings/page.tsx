@@ -1,13 +1,12 @@
 import Image from "next/image";
 import {
   addSliderAction,
-  removeBrandLogoAction,
   removeSliderAction,
   updateSettingsAction,
   uploadAdminAvatarAction,
-  uploadBrandLogoAction,
   uploadSliderAction,
 } from "@/app/actions";
+import { ImageCropUpload } from "@/components/image-crop-upload";
 import { csrfToken } from "@/lib/auth";
 import { readDb } from "@/lib/db";
 
@@ -30,9 +29,6 @@ export default async function AdminSettingsPage({
       {saved ? <p className="alert-success mb-5">Settings saved.</p> : null}
       {error === "upload" ? (
         <p className="alert-error mb-5">Upload a JPG, PNG or WebP image smaller than 4MB.</p>
-      ) : null}
-      {error === "logo" ? (
-        <p className="alert-error mb-5">Enter a company name and upload a JPG, PNG or WebP logo under 4MB.</p>
       ) : null}
 
       <form action={updateSettingsAction} className="panel mb-8 space-y-5 p-5">
@@ -104,7 +100,7 @@ export default async function AdminSettingsPage({
 
       <div className="panel mb-8 p-5">
         <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold">Admin photo</h2>
-        <div className="flex flex-wrap items-center gap-5">
+        <div className="flex flex-wrap items-start gap-5">
           <Image
             src={db.settings.adminAvatar}
             alt="Admin avatar"
@@ -119,16 +115,16 @@ export default async function AdminSettingsPage({
             className="flex flex-1 flex-wrap items-end gap-3"
           >
             <input type="hidden" name="csrf" value={csrf} />
-            <label className="block min-w-56 flex-1">
-              <span className="field-label">Upload profile photo</span>
-              <input
-                type="file"
+            <div className="min-w-64 flex-1">
+              <ImageCropUpload
                 name="avatar"
-                accept="image/jpeg,image/png,image/webp"
-                className="field !py-2.5 !text-xs file:mr-3 file:rounded-md file:border-0 file:bg-gold/20 file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:text-gold"
-                required
+                label="Upload profile photo"
+                aspect={1}
+                defaultWidth={240}
+                minWidth={120}
+                maxWidth={480}
               />
-            </label>
+            </div>
             <button type="submit" className="btn-outline !w-auto min-w-36">
               Upload photo
             </button>
@@ -206,70 +202,6 @@ export default async function AdminSettingsPage({
             className="border border-gold/40 bg-gold/[0.07] px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold/15"
           >
             Upload slide
-          </button>
-        </form>
-      </div>
-
-      <div className="panel mt-6 p-5">
-        <h2 className="mb-1 text-sm font-bold uppercase tracking-widest text-gold">Company logos</h2>
-        <p className="mb-5 font-mono text-[10px] uppercase tracking-wider text-white/40">
-          Uploaded logos replace the text box shown for a bookmaker on betslip cards.
-        </p>
-
-        <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(db.brandLogos).map(([name, logo]) => (
-            <div
-              key={name}
-              className="panel-plain flex items-center justify-between gap-3 p-3"
-            >
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-8 w-[84px] shrink-0 items-center justify-center rounded bg-white px-2">
-                  <Image
-                    src={logo}
-                    alt={name}
-                    width={70}
-                    height={24}
-                    className="h-5 w-auto object-contain"
-                    unoptimized
-                  />
-                </span>
-                <span className="truncate text-xs font-bold capitalize text-white">{name}</span>
-              </div>
-              <form action={removeBrandLogoAction}>
-                <input type="hidden" name="csrf" value={csrf} />
-                <input type="hidden" name="name" value={name} />
-                <button type="submit" className="text-[11px] font-bold text-red-300 hover:text-red-200">
-                  Remove
-                </button>
-              </form>
-            </div>
-          ))}
-        </div>
-
-        <form
-          action={uploadBrandLogoAction}
-          encType="multipart/form-data"
-          className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
-        >
-          <input type="hidden" name="csrf" value={csrf} />
-          <input
-            name="name"
-            placeholder="Company name (e.g. BetPawa)"
-            className="field"
-            required
-          />
-          <input
-            type="file"
-            name="logo"
-            accept="image/jpeg,image/png,image/webp"
-            className="field !py-2.5 !text-xs file:mr-3 file:border-0 file:bg-gold/20 file:px-3 file:py-1.5 file:font-mono file:text-[10px] file:font-bold file:uppercase file:tracking-widest file:text-gold"
-            required
-          />
-          <button
-            type="submit"
-            className="border border-gold/40 bg-gold/[0.07] px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold/15"
-          >
-            Upload logo
           </button>
         </form>
       </div>

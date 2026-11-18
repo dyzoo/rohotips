@@ -2,17 +2,16 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { BetslipCard } from "@/components/betslip-card";
 import { HeroSlider } from "@/components/hero-slider";
-import { findActiveSlips, getBrandLogos, getSettings, getSliders } from "@/lib/db";
+import { findActiveSlips, getSettings, getSliders } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   await connection();
-  const [slips, sliders, settings, logos] = await Promise.all([
+  const [slips, sliders, settings] = await Promise.all([
     findActiveSlips(),
     getSliders(),
     getSettings(),
-    getBrandLogos(),
   ]);
 
   const structuredData = {
@@ -89,7 +88,6 @@ export default async function HomePage() {
               slip={slip}
               adminName={settings.adminName}
               adminAvatar={settings.adminAvatar}
-              logos={logos}
             />
           ))
         )}

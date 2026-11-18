@@ -28,7 +28,10 @@ function normalize(db: Db): Db {
   db.brandLogos ??= {};
   db.settings.adminName ??= "Champee Admin";
   db.settings.adminAvatar ??= "/avatar.svg";
-  for (const slip of db.slips) Reflect.deleteProperty(slip, "matches");
+  for (const slip of db.slips) {
+    Reflect.deleteProperty(slip, "matches");
+    Reflect.deleteProperty(slip, "bookmakers");
+  }
 
   if (!db.carouselMediaSeeded) {
     for (const slide of SEED_MEDIA_SLIDES) {

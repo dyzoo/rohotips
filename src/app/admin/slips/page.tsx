@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { deleteSlipAction } from "@/app/actions";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { csrfToken } from "@/lib/auth";
 import { readDb } from "@/lib/db";
 import { dateLabel, isExpired, money } from "@/lib/format";
@@ -92,12 +93,12 @@ export default async function AdminSlipsPage({
                         <form action={deleteSlipAction}>
                           <input type="hidden" name="csrf" value={csrf} />
                           <input type="hidden" name="id" value={slip.id} />
-                          <button
-                            type="submit"
+                          <ConfirmSubmitButton
+                            message={`Delete "${slip.title}"? This cannot be undone.`}
                             className="border border-red-500/20 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-red-300 hover:bg-red-500/10"
                           >
                             Delete
-                          </button>
+                          </ConfirmSubmitButton>
                         </form>
                       </div>
                     </td>

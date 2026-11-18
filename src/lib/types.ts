@@ -35,7 +35,7 @@ export interface Betslip {
   odds: number;
   price: number;
   validity: string;
-  bookmakers: string[];
+  logo?: string;
   status: SlipStatus;
   createdAt: string;
 }

@@ -5,7 +5,7 @@ import { payForSlipAction } from "@/app/actions";
 import { CopyButton } from "@/components/copy-button";
 import { Countdown } from "@/components/countdown";
 import { csrfToken, getCurrentUser } from "@/lib/auth";
-import { findSlip, getBrandLogos, getSettings } from "@/lib/db";
+import { findSlip, getSettings } from "@/lib/db";
 import { dateLabel, isExpired, money } from "@/lib/format";
 import { userHasSlip } from "@/lib/payments";
 
@@ -20,11 +20,10 @@ export default async function BetslipPage({
 }) {
   const { id } = await params;
   const { error } = await searchParams;
-  const [slip, user, settings, logos] = await Promise.all([
+  const [slip, user, settings] = await Promise.all([
     findSlip(id),
     getCurrentUser(),
     getSettings(),
-    getBrandLogos(),
   ]);
 
   if (!slip) notFound();
@@ -82,17 +81,9 @@ export default async function BetslipPage({
           </div>
         </div>
 
-        {slip.bookmakers.length > 0 ? (
-          <div className="mt-5 flex items-center gap-4 border-t border-white/[0.07] pt-4">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Bookmakers</span>
-            {slip.bookmakers.map((bookmaker) => {
-              const logo = logos[bookmaker.toLowerCase()];
-              return logo ? (
-                <Image key={bookmaker} src={logo} width={64} height={22} alt={bookmaker} className="h-5 w-auto object-contain" unoptimized />
-              ) : (
-                <span key={bookmaker} className="text-xs font-bold text-white/55">{bookmaker}</span>
-              );
-            })}
+        {slip.logo ? (
+          <div className="mt-5 flex justify-end border-t border-white/[0.07] pt-4">
+            <Image src={slip.logo} alt="" width={96} height={32} className="h-7 w-auto object-contain" unoptimized />
           </div>
         ) : null}
       </div>
