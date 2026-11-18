@@ -44,14 +44,15 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <div className="mb-4 flex items-end justify-between gap-3">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="eyebrow">Daily briefing / {new Date().getFullYear()}</p>
-          <h1 className="mt-1 text-[26px] font-black uppercase leading-none tracking-tight text-white">
+          <h1 className="mt-1 text-3xl font-black tracking-tight text-white sm:text-4xl">
             The <span className="gold-text">tip desk</span>
           </h1>
+          <p className="mt-2 text-sm text-white/45">Curated slips, clear odds, fast payment.</p>
         </div>
-        <span className="num hidden text-[10px] tracking-widest text-white/30 sm:block">TZ / EAT</span>
+        <span className="hidden text-xs text-white/35 sm:block">Tanzania · EAT</span>
       </div>
 
       <HeroSlider slides={sliders} />
@@ -71,9 +72,9 @@ export default async function HomePage() {
         <span className="count-badge">{String(slips.length).padStart(2, "0")} live</span>
       </div>
 
-      <div id="tipsContainer">
+      <div id="tipsContainer" className="stagger grid gap-5 md:grid-cols-2">
         {slips.length === 0 ? (
-          <div className="panel-plain px-5 py-14 text-center">
+          <div className="panel-plain px-5 py-14 text-center md:col-span-2">
             <p className="eyebrow mb-3">Desk closed</p>
             <p className="text-[15px] text-white/45">
               No active betslips at the moment.
@@ -82,8 +83,14 @@ export default async function HomePage() {
             </p>
           </div>
         ) : (
-          slips.map((slip, index) => (
-            <BetslipCard key={slip.id} slip={slip} siteName={settings.siteName} logos={logos} index={index} />
+          slips.map((slip) => (
+            <BetslipCard
+              key={slip.id}
+              slip={slip}
+              adminName={settings.adminName}
+              adminAvatar={settings.adminAvatar}
+              logos={logos}
+            />
           ))
         )}
       </div>

@@ -25,9 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Link>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest">
             <span className="hidden text-white/35 sm:inline">{user.email}</span>
-            <Link href="/" className="border border-white/15 px-3 py-2 text-white/70 transition hover:border-gold/45 hover:text-gold">
-              View site
-            </Link>
+            <span className="rounded-full border border-gold/25 bg-gold/[0.07] px-3 py-2 text-gold">Admin</span>
             <form action={logoutAction}>
               <input type="hidden" name="csrf" value={csrf} />
               <button

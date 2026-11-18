@@ -23,9 +23,9 @@ export default async function ProfilePage() {
       <p className="eyebrow">Account / Profile</p>
       <h1 className="mt-1 mb-6 text-2xl font-black uppercase tracking-tight text-white">Member card</h1>
 
-      <div className="ticket mb-6 px-5 pb-5 pt-5">
+      <div className="card mb-6 p-5">
         <div className="flex items-center gap-4">
-          <span className="num grid h-14 w-14 shrink-0 place-items-center border border-gold/50 bg-gold text-xl font-bold text-black">
+          <span className="num grid h-14 w-14 shrink-0 place-items-center rounded-full border-2 border-gold/40 bg-gold text-xl font-bold text-black">
             {initials(user.name)}
           </span>
           <div className="min-w-0">
@@ -35,7 +35,7 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <div className="ticket-divider" />
+        <div className="my-5 border-t border-white/[0.07]" />
 
         <div className="grid grid-cols-3">
           <div className="border-r border-white/[0.07] pr-2">
@@ -75,7 +75,7 @@ export default async function ProfilePage() {
         {user.role === "admin" ? (
           <Link
             href="/admin"
-            className="flex items-center justify-between border border-gold/35 bg-gold/[0.07] px-4 py-4 text-sm font-bold text-gold transition hover:bg-gold/[0.12]"
+            className="flex items-center justify-between rounded-xl border border-gold/35 bg-gold/[0.07] px-4 py-4 text-sm font-bold text-gold transition hover:bg-gold/[0.12]"
           >
             Admin panel
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -88,7 +88,7 @@ export default async function ProfilePage() {
           <Link
             key={link.href}
             href={link.href}
-            className="group flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] px-4 py-4 transition hover:border-gold/40"
+            className="group flex items-center gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-4 transition hover:border-gold/40"
           >
             <span className="num text-[10px] text-gold/60">{link.code}</span>
             <span className="min-w-0 flex-1">

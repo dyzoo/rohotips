@@ -26,7 +26,6 @@ function slip(
   price: number,
   hours: number,
   bookmakers: string[],
-  matches: Betslip["matches"],
 ): Betslip {
   return {
     id,
@@ -37,7 +36,6 @@ function slip(
     price,
     validity: future(SEED_SLIP_HOURS[id] ?? hours),
     bookmakers,
-    matches,
     status: "active",
     createdAt: new Date().toISOString(),
   };
@@ -69,60 +67,10 @@ export function buildSeed(): Db {
     ],
     sessions: [],
     slips: [
-      slip(
-        "1001",
-        "Jamvi la Uhakika",
-        "Jamvi la Leo",
-        10.05,
-        6000,
-        4.3,
-        ["BetPawa"],
-        [
-          { home: "Simba SC", away: "Young Africans", market: "1X2 - Home", odd: 2.15, time: "20:00" },
-          { home: "Arsenal", away: "Chelsea", market: "Over 2.5 Goals", odd: 1.94, time: "22:00" },
-          { home: "Barcelona", away: "Real Madrid", market: "Both Teams To Score", odd: 2.4, time: "23:00" },
-        ],
-      ),
-      slip(
-        "1002",
-        "Kiberenge ya Siku",
-        "Kiberenge",
-        40.87,
-        7000,
-        7.3,
-        ["BetPawa"],
-        [
-          { home: "Manchester City", away: "Liverpool", market: "1X2 - Draw", odd: 3.1, time: "19:30" },
-          { home: "Inter Milan", away: "Juventus", market: "Over 1.5 Goals", odd: 1.55, time: "21:00" },
-          { home: "Al Ahly", away: "Zamalek", market: "Home or Draw", odd: 1.8, time: "20:00" },
-        ],
-      ),
-      slip(
-        "1003",
-        "Booking Code Special",
-        "Booking Code",
-        6.5,
-        5000,
-        26,
-        ["SportyBet", "BetPawa"],
-        [
-          { home: "Dortmund", away: "Bayern", market: "Double Chance", odd: 1.72, time: "21:30" },
-          { home: "PSG", away: "Marseille", market: "1X2 - Home", odd: 1.9, time: "22:00" },
-        ],
-      ),
-      slip(
-        "1004",
-        "Odds Kubwa za Wiki",
-        "Odds Kubwa",
-        18.2,
-        10000,
-        50,
-        ["BetPawa"],
-        [
-          { home: "Real Madrid", away: "Atletico", market: "Correct Score 2-1", odd: 7.5, time: "23:00" },
-          { home: "Napoli", away: "AC Milan", market: "Over 3.5 Goals", odd: 2.6, time: "21:00" },
-        ],
-      ),
+      slip("1001", "Jamvi la Uhakika", "Jamvi la Leo", 10.05, 6000, 4.3, ["BetPawa"]),
+      slip("1002", "Kiberenge ya Siku", "Kiberenge", 40.87, 7000, 7.3, ["BetPawa"]),
+      slip("1003", "Booking Code Special", "Booking Code", 6.5, 5000, 26, ["SportyBet", "BetPawa"]),
+      slip("1004", "Odds Kubwa za Wiki", "Odds Kubwa", 18.2, 10000, 50, ["BetPawa"]),
     ],
     orders: [],
     sliders: [
@@ -138,7 +86,9 @@ export function buildSeed(): Db {
       supportPhone: "0796184234",
       whatsapp: "255796184234",
       email: "support@champeetips.com",
-      announcement: "Mikeka ya uhakika kila siku - lipa kwa M-Pesa, Tigo Pesa, Airtel Money au HaloPesa.",
+      announcement: "Mikeka ya uhakika kila siku - lipa kwa M-Pesa.",
+      adminName: "Champee Admin",
+      adminAvatar: "/avatar.svg",
     },
   };
 }

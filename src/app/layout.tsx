@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | CHAMPEETIPS",
   },
   description:
-    "Pata mikeka ya uhakika, odds kubwa na tips za ushindi kila siku kutoka CHAMPEETIPS. Uchambuzi wa kina na malipo ya haraka kupitia M-Pesa, Tigo Pesa, Airtel Money na HaloPesa.",
+    "Pata mikeka ya uhakika, odds kubwa na tips za ushindi kila siku kutoka CHAMPEETIPS. Uchambuzi wa kina na malipo ya haraka kupitia M-Pesa.",
   keywords: [
     "betting tips tanzania",
     "mikeka ya uhakika",
@@ -49,8 +49,6 @@ export const viewport: Viewport = {
   themeColor: "#0A0A0A",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

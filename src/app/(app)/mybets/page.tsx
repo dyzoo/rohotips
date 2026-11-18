@@ -59,21 +59,21 @@ export default async function MyBetsPage() {
             {paid.map((order) => {
               const slip = slips.get(order.slipId);
               return (
-                <Link key={order.id} href={`/betslip/${order.slipId}`} className="ticket block px-4 py-4">
+                <Link key={order.id} href={`/betslip/${order.slipId}`} className="card block p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-extrabold uppercase tracking-wide text-white">
                         {slip?.title ?? order.slipId}
                       </p>
                       <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
-                        {order.method} / {dateLabel(order.paidAt ?? order.createdAt)}
+                        {dateLabel(order.paidAt ?? order.createdAt)}
                       </p>
                     </div>
                     <span className="tag !border-emerald-500/35 !bg-emerald-500/[0.08] !text-emerald-300">
                       Paid
                     </span>
                   </div>
-                  <div className="ticket-divider" />
+                  <div className="my-4 border-t border-white/[0.07]" />
                   <div className="flex items-center justify-between gap-3 font-mono text-[11px]">
                     <span className="text-white/40">
                       {slip ? <Countdown validity={slip.validity} /> : "Expired"}
@@ -100,12 +100,12 @@ export default async function MyBetsPage() {
         ) : (
           <div className="space-y-3">
             {pending.map((order) => (
-              <Link key={order.id} href={`/checkout/${order.id}`} className="ticket block px-4 py-4">
+              <Link key={order.id} href={`/checkout/${order.id}`} className="card block p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="num text-lg font-bold text-white">{money(order.amount)}</p>
                     <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
-                      {order.method} / {order.reference}
+                      Ref {order.reference}
                     </p>
                   </div>
                   <span className="tag !border-yellow-500/35 !bg-yellow-500/[0.08] !text-yellow-300">

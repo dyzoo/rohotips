@@ -9,13 +9,6 @@ function toLocalInput(iso: string): string {
   )}`;
 }
 
-function matchesText(slip?: Betslip): string {
-  if (!slip) return "";
-  return slip.matches
-    .map((match) => `${match.home} | ${match.away} | ${match.market} | ${match.odd} | ${match.time}`)
-    .join("\n");
-}
-
 export function SlipForm({
   action,
   csrf,
@@ -32,16 +25,14 @@ export function SlipForm({
   return (
     <div>
       <p className="eyebrow">Betslips / {slip ? "Edit" : "Create"}</p>
-      <h1 className="mt-1 text-2xl font-black uppercase tracking-tight text-white">
+      <h1 className="mt-1 text-2xl font-black tracking-tight text-white">
         {slip ? "Edit betslip" : "New betslip"}
       </h1>
-      <p className="mb-6 mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
-        Matches format: Home | Away | Market | Odd | Time — one per line.
-      </p>
+      <p className="mb-6 mt-1 text-xs text-white/40">Set the slip details and the logo shown to customers.</p>
 
       {error ? <p className="alert-error mb-4">{error}</p> : null}
 
-      <form action={action} className="panel space-y-5 p-5 sm:p-6">
+      <form action={action} encType="multipart/form-data" className="panel space-y-5 p-5 sm:p-6">
         <input type="hidden" name="csrf" value={csrf} />
         {slip ? <input type="hidden" name="id" value={slip.id} /> : null}
 
@@ -90,16 +81,22 @@ export function SlipForm({
           </label>
         </div>
 
-        <label className="block">
-          <span className="field-label">Matches</span>
-          <textarea
-            name="matches"
-            rows={6}
-            defaultValue={matchesText(slip)}
-            placeholder={"Simba SC | Young Africans | 1X2 - Home | 2.15 | 20:00\nArsenal | Chelsea | Over 2.5 | 1.94 | 22:00"}
-            className="field num !text-[11px] leading-relaxed"
-          />
-        </label>
+        <div className="grid gap-4 rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="field-label">Bookmaker logo name</span>
+            <input name="bookmakerName" placeholder="BetPawa" className="field" />
+            <span className="mt-2 block text-[11px] text-white/35">Use the same name as in Bookmakers.</span>
+          </label>
+          <label className="block">
+            <span className="field-label">Upload small logo</span>
+            <input
+              type="file"
+              name="bookmakerLogo"
+              accept="image/jpeg,image/png,image/webp"
+              className="field !py-2.5 !text-xs file:mr-3 file:rounded-md file:border-0 file:bg-gold/20 file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:text-gold"
+            />
+          </label>
+        </div>
 
         <div className="flex flex-wrap gap-3 pt-1">
           <button type="submit" className="btn-gold !w-auto min-w-48">

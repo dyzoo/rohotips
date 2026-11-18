@@ -2,7 +2,7 @@ export type Role = "user" | "admin";
 
 export type SlipStatus = "active" | "inactive";
 export type OrderStatus = "pending" | "paid" | "failed" | "cancelled";
-export type PaymentMethod = "M-Pesa" | "Tigo Pesa" | "Airtel Money" | "HaloPesa";
+export type PaymentMethod = "M-Pesa";
 
 export interface User {
   id: string;
@@ -27,14 +27,6 @@ export interface ResetToken {
   expiresAt: string;
 }
 
-export interface Match {
-  home: string;
-  away: string;
-  market: string;
-  odd: number;
-  time: string;
-}
-
 export interface Betslip {
   id: string;
   code: string;
@@ -44,7 +36,6 @@ export interface Betslip {
   price: number;
   validity: string;
   bookmakers: string[];
-  matches: Match[];
   status: SlipStatus;
   createdAt: string;
 }
@@ -76,6 +67,8 @@ export interface Settings {
   whatsapp: string;
   email: string;
   announcement: string;
+  adminName: string;
+  adminAvatar: string;
 }
 
 export interface Db {

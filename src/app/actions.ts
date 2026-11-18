@@ -15,7 +15,7 @@ import {
 import { hashPassword, randomId, verifyPassword } from "@/lib/crypto";
 import { newId, readDb, withDb } from "@/lib/db";
 import { createOrder } from "@/lib/payments";
-import type { Betslip, OrderStatus, PaymentMethod } from "@/lib/types";
+import type { Betslip, OrderStatus } from "@/lib/types";
 
 function text(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -47,6 +47,17 @@ async function saveUpload(file: File, prefix: string): Promise<string> {
   const filename = `${prefix}-${randomId(8)}.${extension}`;
   await writeFile(join(directory, filename), Buffer.from(await file.arrayBuffer()));
   return `/uploads/${filename}`;
+}
+
+async function saveBookmakerLogo(formData: FormData): Promise<{ name: string; image: string } | null> {
+  const name = text(formData, "bookmakerName").toLowerCase();
+  const file = uploadedFile(formData, "bookmakerLogo");
+  if (!name || !file) return null;
+  try {
+    return { name, image: await saveUpload(file, "bookmaker") };
+  } catch {
+    return null;
+  }
 }
 
 export async function loginAction(formData: FormData): Promise<void> {
@@ -166,13 +177,12 @@ export async function logoutAction(formData: FormData): Promise<void> {
 export async function payForSlipAction(formData: FormData): Promise<void> {
   const user = await requireUser();
   const slipId = text(formData, "slipId");
-  const method = text(formData, "method") as PaymentMethod;
   const phone = text(formData, "phone");
   let target = `/betslip/${slipId}?error=payment`;
 
   if ((await verifyCsrf(formData)) && phone.replace(/\D/g, "").length >= 9) {
     try {
-      const order = await createOrder(user.id, slipId, method, phone);
+      const order = await createOrder(user.id, slipId, "M-Pesa", phone);
       target = `/checkout/${order.id}`;
     } catch {
       target = `/betslip/${slipId}?error=payment`;
@@ -197,20 +207,6 @@ function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
     .split(",")
     .map((entry) => entry.trim())
     .filter(Boolean);
-  const matches = text(formData, "matches")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const parts = line.split("|").map((part) => part.trim());
-      return {
-        home: parts[0] ?? "",
-        away: parts[1] ?? "",
-        market: parts[2] ?? "",
-        odd: Number(parts[3]) || 0,
-        time: parts[4] ?? "",
-      };
-    });
   const rawValidity = text(formData, "validity");
   const parsedValidity = rawValidity ? new Date(rawValidity) : new Date(Number.NaN);
   const validity = Number.isFinite(parsedValidity.getTime()) ? parsedValidity.toISOString() : "";
@@ -223,7 +219,6 @@ function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
     price: Number(text(formData, "price")) || 0,
     validity,
     bookmakers,
-    matches,
     status: text(formData, "status") === "inactive" ? "inactive" : "active",
   };
 }
@@ -234,11 +229,13 @@ export async function createSlipAction(formData: FormData): Promise<void> {
   if (await verifyCsrf(formData)) {
     const id = newId();
     const slip = parseSlip(formData, id);
+    const logo = await saveBookmakerLogo(formData);
     if (slip.title && slip.category && slip.odds > 0 && slip.price > 0 && Number.isFinite(new Date(slip.validity).getTime())) {
       await withDb((db) => {
         db.slips.push({ ...slip, createdAt: new Date().toISOString() });
+        if (logo) db.brandLogos[logo.name] = logo.image;
       });
-      revalidatePath("/");
+      revalidatePath("/", "layout");
       revalidatePath("/admin/slips");
       target = "/admin/slips?saved=created";
     }
@@ -252,6 +249,7 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
   let target = `/admin/slips/${id}/edit?error=invalid`;
   if (await verifyCsrf(formData)) {
     const updated = parseSlip(formData, id);
+    const logo = await saveBookmakerLogo(formData);
     if (
       updated.title &&
       updated.category &&
@@ -263,10 +261,11 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
         const index = db.slips.findIndex((entry) => entry.id === id);
         if (index < 0) return false;
         db.slips[index] = { ...updated, createdAt: db.slips[index].createdAt };
+        if (logo) db.brandLogos[logo.name] = logo.image;
         return true;
       });
       if (found) {
-        revalidatePath("/");
+        revalidatePath("/", "layout");
         revalidatePath("/admin/slips");
         target = "/admin/slips?saved=updated";
       }
@@ -328,11 +327,34 @@ export async function updateSettingsAction(formData: FormData): Promise<void> {
         whatsapp: text(formData, "whatsapp"),
         email: text(formData, "email"),
         announcement: text(formData, "announcement"),
+        adminName: text(formData, "adminName") || db.settings.adminName,
+        adminAvatar: db.settings.adminAvatar,
       };
     });
     revalidatePath("/", "layout");
   }
   redirect("/admin/settings?saved=1");
+}
+
+export async function uploadAdminAvatarAction(formData: FormData): Promise<void> {
+  await requireAdmin();
+  let target = "/admin/settings?error=upload";
+  if (await verifyCsrf(formData)) {
+    const file = uploadedFile(formData, "avatar");
+    if (file) {
+      try {
+        const image = await saveUpload(file, "admin");
+        await withDb((db) => {
+          db.settings.adminAvatar = image;
+        });
+        revalidatePath("/", "layout");
+        target = "/admin/settings?saved=1";
+      } catch {
+        target = "/admin/settings?error=upload";
+      }
+    }
+  }
+  redirect(target);
 }
 
 export async function addSliderAction(formData: FormData): Promise<void> {

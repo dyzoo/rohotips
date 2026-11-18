@@ -29,7 +29,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
         Back to slip
       </Link>
 
-      <div className="panel p-5">
+      <div className="card p-5 sm:p-6">
         <div className="panel-head">
           <div>
             <p className="eyebrow !text-[9px]">Payment / {order.reference}</p>
@@ -42,7 +42,6 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
           {[
             { label: "Betslip", value: slip?.title ?? order.slipId },
             { label: "Amount", value: money(order.amount), gold: true },
-            { label: "Method", value: order.method },
             { label: "Phone", value: order.phone },
             { label: "Reference", value: order.reference },
             { label: "Created", value: dateLabel(order.createdAt) },
@@ -60,7 +59,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
               Payment received. Your betslip is unlocked.
             </div>
             {slip ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 border border-gold/30 bg-gold/[0.06] p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold/30 bg-gold/[0.06] p-4">
                 <div>
                   <p className="eyebrow !text-[9px]">Booking code</p>
                   <p className="num mt-1 text-xl font-bold tracking-widest text-gold">{slip.code}</p>
@@ -74,7 +73,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
           </div>
         ) : order.status === "pending" ? (
           <div className="space-y-4">
-            <div className="border-l-2 border-gold bg-gold/[0.06] p-4 text-sm leading-relaxed text-gold/90">
+            <div className="rounded-xl border-l-2 border-gold bg-gold/[0.06] p-4 text-sm leading-relaxed text-gold/90">
               {order.mode === "live"
                 ? `A payment request was sent to ${order.phone}. Enter your M-Pesa PIN to complete the payment.`
                 : "We are confirming your payment. This page will update automatically once it is received."}

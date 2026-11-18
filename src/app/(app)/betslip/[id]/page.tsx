@@ -11,8 +11,6 @@ import { userHasSlip } from "@/lib/payments";
 
 export const dynamic = "force-dynamic";
 
-const methods = ["M-Pesa", "Tigo Pesa", "Airtel Money", "HaloPesa"] as const;
-
 export default async function BetslipPage({
   params,
   searchParams,
@@ -39,153 +37,111 @@ export default async function BetslipPage({
     <div className="animate-enter">
       <Link
         href="/"
-        className="mb-5 inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-white/45 transition hover:text-gold"
+        className="mb-5 inline-flex items-center gap-2 text-xs font-semibold text-white/45 transition hover:text-gold"
       >
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.3">
           <path d="M19 12H5M12 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        Back to board
+        Back to slips
       </Link>
 
-      <div className="ticket mb-6 px-4 pb-4 pt-4 sm:px-5">
-        <div className="mb-5 flex items-start justify-between gap-3">
+      <div className="card p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="grid h-11 w-11 shrink-0 place-items-center border border-gold/35 bg-black/50">
-              <Image src="/avatar.svg" alt={settings.siteName} width={30} height={30} className="h-7 w-7 object-contain" unoptimized />
-            </span>
+            <Image
+              src={settings.adminAvatar}
+              alt={settings.adminName}
+              width={46}
+              height={46}
+              className="h-12 w-12 shrink-0 rounded-full border-2 border-gold/35 object-cover"
+              unoptimized
+            />
             <div className="min-w-0">
-              <p className="eyebrow !text-[9px]">Slip / {slip.id}</p>
-              <h1 className="truncate text-lg font-extrabold uppercase tracking-wide text-white">{slip.title}</h1>
-              <p className="font-mono text-[10px] uppercase tracking-wider text-white/40">
-                {slip.matches.length} selections
-              </p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Verified tipster</p>
+              <p className="truncate text-sm font-bold text-white">{settings.adminName}</p>
             </div>
           </div>
           <span className="tag">{slip.category}</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="eyebrow !text-[9px]">Total odds</p>
-            <p className="num mt-1 text-3xl font-bold text-white">{slip.odds.toFixed(2)}</p>
-          </div>
-          <div className="border-l border-gold/25 pl-4 text-right">
-            <p className="eyebrow !text-[9px]">Price</p>
-            <p className="num mt-1 text-2xl font-bold text-gold">{money(slip.price)}</p>
-          </div>
-        </div>
+        <h1 className="mt-6 text-2xl font-black tracking-tight text-white sm:text-3xl">{slip.title}</h1>
 
-        <div className="ticket-divider" />
-
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-white/40">
-            Valid for <Countdown validity={slip.validity} />
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-widest text-white/30">
-            Expires {dateLabel(slip.validity)}
-          </span>
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Combined odds</p>
+            <p className="num mt-1.5 text-2xl font-bold text-white">{slip.odds.toFixed(2)}</p>
+          </div>
+          <div className="rounded-xl border border-gold/15 bg-gold/[0.05] p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gold/60">Entry fee</p>
+            <p className="num mt-1.5 text-2xl font-bold text-gold">{money(slip.price)}</p>
+          </div>
+          <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Validity</p>
+            <p className="mt-1.5 text-sm font-semibold text-white"><Countdown validity={slip.validity} /></p>
+            <p className="mt-1 text-[10px] text-white/35">{dateLabel(slip.validity)}</p>
+          </div>
         </div>
 
         {slip.bookmakers.length > 0 ? (
-          <div className="mt-4 flex flex-wrap gap-1.5">
+          <div className="mt-5 flex items-center gap-4 border-t border-white/[0.07] pt-4">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-white/35">Bookmakers</span>
             {slip.bookmakers.map((bookmaker) => {
               const logo = logos[bookmaker.toLowerCase()];
               return logo ? (
-                <span key={bookmaker} className="bookmaker-chip bg-[#e7dfd1] px-2">
-                  <Image src={logo} alt={bookmaker} width={70} height={24} className="h-5 w-auto object-contain" unoptimized />
-                </span>
+                <Image key={bookmaker} src={logo} width={64} height={22} alt={bookmaker} className="h-5 w-auto object-contain" unoptimized />
               ) : (
-                <span key={bookmaker} className="bookmaker-chip">{bookmaker}</span>
+                <span key={bookmaker} className="text-xs font-bold text-white/55">{bookmaker}</span>
               );
             })}
           </div>
         ) : null}
       </div>
 
-      {error ? <p className="alert-error mb-5">Payment could not be started. Please check your details and try again.</p> : null}
+      {error ? <p className="alert-error mt-5">Payment could not be started. Please try again.</p> : null}
 
       {purchased ? (
-        <div className="mb-6">
-          <div className="panel mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
-            <div>
-              <p className="eyebrow !text-[9px]">Booking code</p>
-              <p className="num mt-1 text-xl font-bold tracking-widest text-gold">{slip.code}</p>
-            </div>
+        <div className="card mt-5 p-6 text-center">
+          <p className="eyebrow">Payment complete</p>
+          <h2 className="mt-2 text-xl font-bold text-white">Your booking code</h2>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-white/45">
+            Use this code on your betting account to place the slip.
+          </p>
+          <div className="mx-auto mt-5 flex max-w-md flex-wrap items-center justify-center gap-4 rounded-xl border border-gold/25 bg-gold/[0.06] p-5">
+            <span className="num text-2xl font-bold tracking-widest text-gold sm:text-3xl">{slip.code}</span>
             <CopyButton value={slip.code} />
           </div>
-
-          <div className="panel-plain overflow-hidden">
-            {slip.matches.map((match, index) => (
-              <div
-                key={`${match.home}-${match.away}`}
-                className={`flex items-start justify-between gap-3 px-4 py-4 ${
-                  index < slip.matches.length - 1 ? "border-b border-white/[0.06]" : ""
-                }`}
-              >
-                <div className="min-w-0">
-                  <p className="font-mono text-[9px] tracking-widest text-gold/60">
-                    {String(index + 1).padStart(2, "0")}
-                  </p>
-                  <p className="mt-1 text-sm font-bold text-white">
-                    {match.home} <span className="text-white/30">vs</span> {match.away}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
-                    {match.market} / {match.time}
-                  </p>
-                </div>
-                <span className="num border border-gold/30 bg-gold/[0.06] px-2.5 py-1 text-sm font-bold text-gold">
-                  {match.odd.toFixed(2)}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <Link href="/mybets" className="btn-outline mt-4">
-            View all my bets
+          <Link href="/mybets" className="btn-outline mx-auto mt-5 max-w-xs">
+            View my bets
           </Link>
         </div>
       ) : expired ? (
-        <div className="alert-error p-6 text-center">
-          <p className="text-sm font-bold">This betslip has expired.</p>
-          <Link href="/" className="mt-3 inline-block font-mono text-[10px] font-bold uppercase tracking-widest text-gold">
-            Browse active betslips
+        <div className="alert-error mt-5 p-6 text-center">
+          <p className="text-sm font-bold">This slip has expired.</p>
+          <Link href="/" className="mt-3 inline-block text-xs font-semibold text-gold">
+            Browse active slips
           </Link>
         </div>
       ) : (
-        <div className="panel p-5">
-          <div className="panel-head">
+        <div className="card mt-5 p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="eyebrow !text-[9px]">Checkout</p>
-              <h2 className="mt-1 text-base font-extrabold uppercase tracking-wide text-white">Unlock this slip</h2>
+              <p className="eyebrow">Checkout</p>
+              <h2 className="mt-1 text-lg font-bold text-white">Unlock this slip</h2>
             </div>
-            <span className="num text-lg font-bold text-gold">{money(slip.price)}</span>
+            <span className="num text-xl font-bold text-gold">{money(slip.price)}</span>
           </div>
-
-          <p className="mb-5 text-xs leading-relaxed text-white/45">
-            Lipia {money(slip.price)} kupata booking code kamili na uchambuzi wa mechi zote.
+          <p className="mt-3 text-sm leading-relaxed text-white/45">
+            Lipia {money(slip.price)} kupata booking code kamili. Payment is handled securely via M-Pesa.
           </p>
 
           {user ? (
-            <form action={payForSlipAction} className="space-y-4">
+            <form action={payForSlipAction} className="mt-5 space-y-4">
               <input type="hidden" name="csrf" value={csrf} />
               <input type="hidden" name="slipId" value={slip.id} />
 
               <div>
-                <label htmlFor="method" className="field-label">
-                  Payment method
-                </label>
-                <select id="method" name="method" className="field" defaultValue="M-Pesa">
-                  {methods.map((method) => (
-                    <option key={method} value={method}>
-                      {method}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
                 <label htmlFor="phone" className="field-label">
-                  Phone number
+                  M-Pesa phone number
                 </label>
                 <input
                   id="phone"
@@ -199,11 +155,11 @@ export default async function BetslipPage({
               </div>
 
               <button type="submit" className="btn-gold">
-                Lipa {money(slip.price)}
+                Pay {money(slip.price)}
               </button>
             </form>
           ) : (
-            <div className="space-y-3">
+            <div className="mt-5 space-y-3">
               <Link href={`/login?next=${encodeURIComponent(`/betslip/${slip.id}`)}`} className="btn-gold">
                 Ingia kulipia
               </Link>
@@ -212,20 +168,6 @@ export default async function BetslipPage({
               </Link>
             </div>
           )}
-
-          <div className="mt-6 border-t border-white/[0.07] pt-4">
-            <p className="eyebrow mb-3 !text-[9px]">Locked selections</p>
-            <ul className="space-y-2">
-              {slip.matches.map((match) => (
-                <li key={`${match.home}-${match.away}`} className="flex items-center justify-between gap-2 font-mono text-[11px] text-white/30">
-                  <span className="truncate">
-                    {match.home} vs {match.away}
-                  </span>
-                  <span className="shrink-0 border border-white/10 px-2 py-0.5">•••</span>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
       )}
     </div>

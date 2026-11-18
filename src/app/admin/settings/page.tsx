@@ -4,6 +4,7 @@ import {
   removeBrandLogoAction,
   removeSliderAction,
   updateSettingsAction,
+  uploadAdminAvatarAction,
   uploadBrandLogoAction,
   uploadSliderAction,
 } from "@/app/actions";
@@ -37,6 +38,15 @@ export default async function AdminSettingsPage({
       <form action={updateSettingsAction} className="panel mb-8 space-y-5 p-5">
         <input type="hidden" name="csrf" value={csrf} />
         <div className="grid gap-4 md:grid-cols-2">
+          <label className="block">
+            <span className="field-label">Admin name on slips</span>
+            <input
+              name="adminName"
+              defaultValue={db.settings.adminName}
+              className="field"
+              required
+            />
+          </label>
           <label className="block">
             <span className="field-label">Site name</span>
             <input
@@ -91,6 +101,40 @@ export default async function AdminSettingsPage({
           Save settings
         </button>
       </form>
+
+      <div className="panel mb-8 p-5">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold">Admin photo</h2>
+        <div className="flex flex-wrap items-center gap-5">
+          <Image
+            src={db.settings.adminAvatar}
+            alt="Admin avatar"
+            width={56}
+            height={56}
+            className="h-14 w-14 shrink-0 rounded-full border-2 border-gold/35 object-cover"
+            unoptimized
+          />
+          <form
+            action={uploadAdminAvatarAction}
+            encType="multipart/form-data"
+            className="flex flex-1 flex-wrap items-end gap-3"
+          >
+            <input type="hidden" name="csrf" value={csrf} />
+            <label className="block min-w-56 flex-1">
+              <span className="field-label">Upload profile photo</span>
+              <input
+                type="file"
+                name="avatar"
+                accept="image/jpeg,image/png,image/webp"
+                className="field !py-2.5 !text-xs file:mr-3 file:rounded-md file:border-0 file:bg-gold/20 file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:text-gold"
+                required
+              />
+            </label>
+            <button type="submit" className="btn-outline !w-auto min-w-36">
+              Upload photo
+            </button>
+          </form>
+        </div>
+      </div>
 
       <div className="panel p-5">
         <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold">Hero slides</h2>

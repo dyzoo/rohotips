@@ -47,7 +47,7 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
                 src={slide.image}
                 alt="Promotion"
                 fill
-                sizes="(max-width: 500px) 100vw, 500px"
+                sizes="(max-width: 768px) 100vw, 960px"
                 className="object-cover"
                 unoptimized
                 priority
@@ -57,13 +57,13 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
         ))}
       </div>
 
-      <div className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 border border-gold/40 bg-black/65 px-2.5 py-1.5">
+      <div className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 rounded-lg border border-gold/40 bg-black/65 px-2.5 py-1.5 backdrop-blur">
         <span className="num text-xs font-bold text-gold">{counter}</span>
         <span className="h-3 w-px bg-gold/40" />
         <span className="num text-[10px] text-white/60">{last}</span>
       </div>
 
-      <span className="pointer-events-none absolute right-4 top-4 z-10 eyebrow !text-[8px] text-white/65">
+      <span className="pointer-events-none absolute right-4 top-4 z-10 rounded-full bg-black/45 px-3 py-1.5 eyebrow !text-[8px] text-white/65 backdrop-blur">
         Featured slip
       </span>
 
@@ -76,7 +76,7 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
                 type="button"
                 aria-label={`Go to slide ${dotIndex + 1}`}
                 onClick={() => go(dotIndex)}
-                className={`h-[3px] flex-1 transition-all ${
+                  className={`h-[3px] flex-1 rounded-full transition-all ${
                   dotIndex === index ? "bg-gold" : "bg-white/25 hover:bg-white/50"
                 }`}
               />
