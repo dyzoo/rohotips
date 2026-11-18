@@ -370,6 +370,29 @@ export async function updateAdminProfileAction(formData: FormData): Promise<void
   redirect(target);
 }
 
+export async function changeAdminPasswordAction(formData: FormData): Promise<void> {
+  const admin = await requireAdmin();
+  let target = "/admin/settings?error=password";
+  if (await verifyCsrf(formData)) {
+    const currentPassword = text(formData, "currentPassword");
+    const password = text(formData, "password");
+    const confirm = text(formData, "confirm_password");
+
+    if (!verifyPassword(currentPassword, admin.passwordHash)) {
+      target = "/admin/settings?error=current-password";
+    } else if (password.length < 6 || password !== confirm) {
+      target = "/admin/settings?error=password";
+    } else {
+      await withDb((db) => {
+        const account = db.users.find((entry) => entry.id === admin.id);
+        if (account) account.passwordHash = hashPassword(password);
+      });
+      target = "/admin/settings?saved=password";
+    }
+  }
+  redirect(target);
+}
+
 export async function uploadAdminAvatarAction(formData: FormData): Promise<void> {
   await requireAdmin();
   let target = "/admin/settings?error=upload";

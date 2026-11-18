@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {
   addSliderAction,
+  changeAdminPasswordAction,
   removeSliderAction,
   updateAdminProfileAction,
   updateSettingsAction,
@@ -30,7 +31,10 @@ export default async function AdminSettingsPage({
       </p>
 
       {saved === "profile" ? <p className="alert-success mb-5">Profile saved.</p> : null}
-      {saved && saved !== "profile" ? <p className="alert-success mb-5">Settings saved.</p> : null}
+      {saved === "password" ? <p className="alert-success mb-5">Password updated.</p> : null}
+      {saved && saved !== "profile" && saved !== "password" ? (
+        <p className="alert-success mb-5">Settings saved.</p>
+      ) : null}
       {error === "upload" ? (
         <p className="alert-error mb-5">Upload a JPG, PNG or WebP image smaller than 4MB.</p>
       ) : null}
@@ -39,6 +43,14 @@ export default async function AdminSettingsPage({
       ) : null}
       {error === "profile" ? (
         <p className="alert-error mb-5">Please enter a username, slip name and admin name.</p>
+      ) : null}
+      {error === "current-password" ? (
+        <p className="alert-error mb-5">Current password is incorrect.</p>
+      ) : null}
+      {error === "password" ? (
+        <p className="alert-error mb-5">
+          New password must be at least 6 characters and match the confirmation.
+        </p>
       ) : null}
 
       <form action={updateAdminProfileAction} className="panel mb-8 space-y-5 p-5" id="profile">
@@ -59,6 +71,48 @@ export default async function AdminSettingsPage({
         </div>
         <button type="submit" className="btn-gold !w-auto min-w-48">
           Save profile
+        </button>
+      </form>
+
+      <form action={changeAdminPasswordAction} className="panel mb-8 space-y-5 p-5" id="password">
+        <input type="hidden" name="csrf" value={csrf} />
+        <h2 className="text-sm font-bold uppercase tracking-widest text-gold">Change password</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <label className="block">
+            <span className="field-label">Current password</span>
+            <input
+              name="currentPassword"
+              type="password"
+              autoComplete="current-password"
+              className="field"
+              required
+            />
+          </label>
+          <label className="block">
+            <span className="field-label">New password</span>
+            <input
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              minLength={6}
+              className="field"
+              required
+            />
+          </label>
+          <label className="block">
+            <span className="field-label">Confirm new password</span>
+            <input
+              name="confirm_password"
+              type="password"
+              autoComplete="new-password"
+              minLength={6}
+              className="field"
+              required
+            />
+          </label>
+        </div>
+        <button type="submit" className="btn-gold !w-auto min-w-48">
+          Update password
         </button>
       </form>
 
