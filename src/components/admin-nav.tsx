@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const links: { href: string; label: string; match?: string }[] = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/slips", label: "Betslips" },
+  { href: "/admin/betslip", label: "Bet Slip" },
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/settings#profile", label: "Profile", match: "/admin/settings" },
