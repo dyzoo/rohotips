@@ -161,8 +161,9 @@ export default async function BetslipPage({
                 id="phone"
                 name="phone"
                 type="tel"
-                defaultValue={user.phone}
+                inputMode="tel"
                 placeholder="07XX XXX XXX"
+                pattern="[0-9+ ()-]{9,}"
                 className="field betslip-phone-field text-center"
                 required
               />

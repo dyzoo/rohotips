@@ -43,7 +43,6 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
           {[
             { label: "Betslip", value: slip?.title ?? order.slipId },
             { label: "Amount", value: money(order.amount), gold: true },
-            { label: "Phone", value: order.phone },
             { label: "Reference", value: order.reference },
             { label: "Created", value: dateLabel(order.createdAt) },
           ].map((row) => (
@@ -87,7 +86,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
           <div className="space-y-4">
             <div className="rounded-xl border-l-2 border-gold bg-gold/[0.06] p-4 text-sm leading-relaxed text-gold/90">
               {order.mode === "live"
-                ? `A HarakaPay request was sent to ${order.phone}. Enter your M-Pesa PIN to complete the payment.`
+                ? "A HarakaPay request was sent to your phone. Enter your M-Pesa PIN to complete the payment."
                 : "We are confirming your payment. This page will update automatically once it is received."}
             </div>
             <Link href="/mybets" className="btn-outline">
