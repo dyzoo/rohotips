@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit } from "next/font/google";
+import { Outfit, Roboto } from "next/font/google";
 import "./globals.css";
 
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
+});
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -53,7 +60,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="sw" className={`${outfit.variable} h-full antialiased`}>
+    <html lang="sw" className={`${outfit.variable} ${roboto.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

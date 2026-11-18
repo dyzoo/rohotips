@@ -39,7 +39,7 @@ export function SlipPreview({
   const styles = slipTheme[theme];
 
   return (
-    <div ref={containerRef} className={`w-full rounded-[24px] p-4 sm:p-6 ${styles.page}`}>
+    <div ref={containerRef} className={`bet-slip-font w-full rounded-[24px] p-4 sm:p-6 ${styles.page}`}>
       <div className={`rounded-[18px] p-4 sm:p-5 ${styles.card}`}>
         <FinancialRow label="ODDS" value={odds} theme={theme} currency={null} />
         <FinancialRow label="STAKE" value={stake} theme={theme} />

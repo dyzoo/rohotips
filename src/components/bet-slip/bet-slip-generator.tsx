@@ -92,21 +92,21 @@ export function BetSlipGenerator() {
     if (!previewRef.current) return;
     setDownloading(true);
     try {
-      const { default: html2canvas } = await import("html2canvas");
-      const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
+      const { toPng } = await import("html-to-image");
+      const dataUrl = await toPng(previewRef.current, {
+        pixelRatio: 2,
         backgroundColor: theme === "dark" ? "#24262A" : "#F4F5F7",
-        useCORS: true,
-        logging: false,
+        cacheBust: true,
       });
       const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
+      link.href = dataUrl;
       link.download = `betslip-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       setToast("Bet slip image downloaded.");
-    } catch {
+    } catch (error) {
+      console.error("Bet slip image export failed", error);
       setToast("Download failed. Please try again.");
     } finally {
       setDownloading(false);
