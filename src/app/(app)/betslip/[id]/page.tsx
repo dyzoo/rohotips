@@ -132,7 +132,7 @@ export default async function BetslipPage({
 
               <div>
                 <label htmlFor="phone" className="field-label">
-                  M-Pesa phone number
+                  M-Pesa phone number (HarakaPay)
                 </label>
                 <input
                   id="phone"
@@ -148,6 +148,9 @@ export default async function BetslipPage({
               <button type="submit" className="btn-gold">
                 Pay {money(slip.price)}
               </button>
+              <p className="text-center text-[11px] text-white/35">
+                Payments processed securely by HarakaPay.
+              </p>
             </form>
           ) : (
             <div className="mt-5 space-y-3">

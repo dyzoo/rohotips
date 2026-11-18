@@ -14,7 +14,7 @@ import {
 } from "@/lib/auth";
 import { hashPassword, randomId, verifyPassword } from "@/lib/crypto";
 import { newId, readDb, withDb } from "@/lib/db";
-import { createOrder } from "@/lib/payments";
+import { createOrder, syncOrderFromHarakapay } from "@/lib/payments";
 import type { Betslip, OrderStatus } from "@/lib/types";
 
 function text(formData: FormData, key: string): string {
@@ -198,7 +198,18 @@ export async function orderStatusAction(
   if (!user) return null;
   const db = await readDb();
   const order = db.orders.find((entry) => entry.id === orderId && entry.userId === user.id);
-  return order ? { status: order.status, slipId: order.slipId } : null;
+  if (!order) return null;
+
+  if (order.status === "pending") {
+    try {
+      await syncOrderFromHarakapay(order.id);
+    } catch {
+      return { status: order.status, slipId: order.slipId };
+    }
+  }
+
+  const updated = (await readDb()).orders.find((entry) => entry.id === orderId);
+  return { status: updated?.status ?? order.status, slipId: order.slipId };
 }
 
 function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
@@ -316,18 +327,47 @@ export async function updateSettingsAction(formData: FormData): Promise<void> {
   if (await verifyCsrf(formData)) {
     await withDb((db) => {
       db.settings = {
-        siteName: text(formData, "siteName"),
+        ...db.settings,
         supportPhone: text(formData, "supportPhone"),
         whatsapp: text(formData, "whatsapp"),
         email: text(formData, "email"),
         announcement: text(formData, "announcement"),
-        adminName: text(formData, "adminName") || db.settings.adminName,
-        adminAvatar: db.settings.adminAvatar,
       };
     });
     revalidatePath("/", "layout");
   }
   redirect("/admin/settings?saved=1");
+}
+
+export async function updateAdminProfileAction(formData: FormData): Promise<void> {
+  await requireAdmin();
+  let target = "/admin/settings?error=profile";
+  if (await verifyCsrf(formData)) {
+    const current = await getCurrentUser();
+    const username = text(formData, "username");
+    const adminName = text(formData, "adminName");
+    const slipName = text(formData, "slipName");
+    const taken =
+      current !== null &&
+      (await readDb()).users.some(
+        (entry) => entry.id !== current.id && entry.name.toLowerCase() === username.toLowerCase(),
+      );
+
+    if (current && username.length >= 2 && adminName && slipName && !taken) {
+      await withDb((db) => {
+        const account = db.users.find((entry) => entry.id === current.id);
+        if (account) account.name = username;
+        db.settings.adminName = adminName;
+        db.settings.siteName = slipName;
+      });
+      revalidatePath("/", "layout");
+      revalidatePath("/admin/settings");
+      target = "/admin/settings?saved=profile";
+    } else if (taken) {
+      target = "/admin/settings?error=username";
+    }
+  }
+  redirect(target);
 }
 
 export async function uploadAdminAvatarAction(formData: FormData): Promise<void> {

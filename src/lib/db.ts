@@ -44,8 +44,10 @@ function normalize(db: Db): Db {
   if (db.settings.email === "support@rohotips.co.tz") db.settings.email = "support@champeetips.com";
   for (const user of db.users) {
     if (user.id === "admin-rohotips") {
-      user.name = "Champee Admin";
-      user.email = "admin@champeetips.com";
+      user.name ||= "Champee Admin";
+      if (!user.email || user.email === "admin@rohotips.co.tz") {
+        user.email = "admin@champeetips.com";
+      }
     } else if (user.id === "demo-user" && user.email === "demo@rohotips.co.tz") {
       user.email = "demo@champeetips.com";
     }

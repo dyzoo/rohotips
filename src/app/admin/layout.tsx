@@ -3,12 +3,16 @@ import Link from "next/link";
 import { logoutAction } from "@/app/actions";
 import { AdminNav } from "@/components/admin-nav";
 import { csrfToken, requireAdmin } from "@/lib/auth";
+import { getSettings } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireAdmin("/admin");
-  const csrf = await csrfToken();
+  const [user, csrf, settings] = await Promise.all([
+    requireAdmin("/admin"),
+    csrfToken(),
+    getSettings(),
+  ]);
 
   return (
     <div className="min-h-screen bg-ink">
@@ -24,8 +28,23 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </span>
           </Link>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest">
-            <span className="hidden text-white/35 sm:inline">{user.email}</span>
-            <span className="rounded-full border border-gold/25 bg-gold/[0.07] px-3 py-2 text-gold">Admin</span>
+            <Link
+              href="/admin/settings#profile"
+              className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] py-1 pl-1 pr-3 transition hover:border-gold/40 sm:flex"
+            >
+              <Image
+                src={settings.adminAvatar}
+                alt=""
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full border border-gold/25 object-cover"
+                unoptimized
+              />
+              <span className="max-w-32 truncate font-sans text-[11px] font-bold normal-case tracking-normal text-white/80">
+                {settings.adminName}
+              </span>
+            </Link>
+            <span className="rounded-full border border-gold/25 bg-gold/[0.07] px-3 py-2 text-gold">{user.role}</span>
             <form action={logoutAction}>
               <input type="hidden" name="csrf" value={csrf} />
               <button

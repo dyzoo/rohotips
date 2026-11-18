@@ -213,6 +213,14 @@ textarea:focus-visible {
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
+.field-with-icon {
+  padding-left: 44px;
+}
+
+.field-with-toggle {
+  padding-right: 48px;
+}
+
 .field::placeholder {
   color: rgba(255, 255, 255, 0.26);
 }

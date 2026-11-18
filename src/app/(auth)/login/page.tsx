@@ -55,7 +55,7 @@ export default async function LoginPage({
               type="text"
               name="login"
               placeholder="you@example.com"
-              className="field pl-11"
+              className="field field-with-icon"
               autoComplete="username"
               required
             />
@@ -78,7 +78,7 @@ export default async function LoginPage({
               name="password"
               id="password"
               placeholder="Enter your password"
-              className="field pl-11 pr-12"
+              className="field field-with-icon field-with-toggle"
               toggleClassName="right-4 text-white/35 transition hover:text-white"
             />
           </div>

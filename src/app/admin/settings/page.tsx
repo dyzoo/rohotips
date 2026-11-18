@@ -2,12 +2,13 @@ import Image from "next/image";
 import {
   addSliderAction,
   removeSliderAction,
+  updateAdminProfileAction,
   updateSettingsAction,
   uploadAdminAvatarAction,
   uploadSliderAction,
 } from "@/app/actions";
 import { ImageCropUpload } from "@/components/image-crop-upload";
-import { csrfToken } from "@/lib/auth";
+import { csrfToken, requireAdmin } from "@/lib/auth";
 import { readDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -18,88 +19,51 @@ export default async function AdminSettingsPage({
   searchParams: Promise<{ saved?: string; error?: string }>;
 }) {
   const { saved, error } = await searchParams;
-  const [db, csrf] = await Promise.all([readDb(), csrfToken()]);
+  const [db, csrf, admin] = await Promise.all([readDb(), csrfToken(), requireAdmin()]);
 
   return (
     <div>
       <p className="eyebrow">System / Configuration</p>
       <h1 className="mt-1 text-2xl font-black uppercase tracking-tight text-white">Settings</h1>
-      <p className="mb-6 mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">Site details, support contacts and hero slides.</p>
+      <p className="mb-6 mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
+        Admin profile, site details and hero slides.
+      </p>
 
-      {saved ? <p className="alert-success mb-5">Settings saved.</p> : null}
+      {saved === "profile" ? <p className="alert-success mb-5">Profile saved.</p> : null}
+      {saved && saved !== "profile" ? <p className="alert-success mb-5">Settings saved.</p> : null}
       {error === "upload" ? (
         <p className="alert-error mb-5">Upload a JPG, PNG or WebP image smaller than 4MB.</p>
       ) : null}
+      {error === "username" ? (
+        <p className="alert-error mb-5">That username is already in use.</p>
+      ) : null}
+      {error === "profile" ? (
+        <p className="alert-error mb-5">Please enter a username, slip name and admin name.</p>
+      ) : null}
 
-      <form action={updateSettingsAction} className="panel mb-8 space-y-5 p-5">
+      <form action={updateAdminProfileAction} className="panel mb-8 space-y-5 p-5" id="profile">
         <input type="hidden" name="csrf" value={csrf} />
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
+          <label className="block">
+            <span className="field-label">Username</span>
+            <input name="username" defaultValue={admin.name} className="field" required />
+          </label>
           <label className="block">
             <span className="field-label">Admin name on slips</span>
-            <input
-              name="adminName"
-              defaultValue={db.settings.adminName}
-              className="field"
-              required
-            />
+            <input name="adminName" defaultValue={db.settings.adminName} className="field" required />
           </label>
           <label className="block">
-            <span className="field-label">Site name</span>
-            <input
-              name="siteName"
-              defaultValue={db.settings.siteName}
-              className="field"
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="field-label">Support phone</span>
-            <input
-              name="supportPhone"
-              defaultValue={db.settings.supportPhone}
-              className="field"
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="field-label">WhatsApp number</span>
-            <input
-              name="whatsapp"
-              defaultValue={db.settings.whatsapp}
-              className="field"
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="field-label">Support email</span>
-            <input
-              name="email"
-              type="email"
-              defaultValue={db.settings.email}
-              className="field"
-              required
-            />
+            <span className="field-label">Slip name</span>
+            <input name="slipName" defaultValue={db.settings.siteName} className="field" required />
           </label>
         </div>
-        <label className="block">
-          <span className="field-label">Announcement</span>
-          <textarea
-            name="announcement"
-            rows={3}
-            defaultValue={db.settings.announcement}
-            className="field"
-          />
-        </label>
-        <button
-          type="submit"
-          className="btn-gold !w-auto min-w-48"
-        >
-          Save settings
+        <button type="submit" className="btn-gold !w-auto min-w-48">
+          Save profile
         </button>
       </form>
 
       <div className="panel mb-8 p-5">
-        <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold">Admin photo</h2>
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold">Profile photo</h2>
         <div className="flex flex-wrap items-start gap-5">
           <Image
             src={db.settings.adminAvatar}
@@ -132,6 +96,31 @@ export default async function AdminSettingsPage({
         </div>
       </div>
 
+      <form action={updateSettingsAction} className="panel mb-8 space-y-5 p-5">
+        <input type="hidden" name="csrf" value={csrf} />
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block">
+            <span className="field-label">Support phone</span>
+            <input name="supportPhone" defaultValue={db.settings.supportPhone} className="field" required />
+          </label>
+          <label className="block">
+            <span className="field-label">WhatsApp number</span>
+            <input name="whatsapp" defaultValue={db.settings.whatsapp} className="field" required />
+          </label>
+          <label className="block">
+            <span className="field-label">Support email</span>
+            <input name="email" type="email" defaultValue={db.settings.email} className="field" required />
+          </label>
+        </div>
+        <label className="block">
+          <span className="field-label">Announcement</span>
+          <textarea name="announcement" rows={3} defaultValue={db.settings.announcement} className="field" />
+        </label>
+        <button type="submit" className="btn-gold !w-auto min-w-48">
+          Save settings
+        </button>
+      </form>
+
       <div className="panel p-5">
         <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold">Hero slides</h2>
 
@@ -157,17 +146,8 @@ export default async function AdminSettingsPage({
 
         <form action={addSliderAction} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
           <input type="hidden" name="csrf" value={csrf} />
-          <input
-            name="image"
-            placeholder="/banner-1.svg or https://..."
-            className="field"
-            required
-          />
-          <input
-            name="link"
-            placeholder="/betslip/1001"
-            className="field"
-          />
+          <input name="image" placeholder="/banner-1.svg or https://..." className="field" required />
+          <input name="link" placeholder="/betslip/1001" className="field" />
           <button
             type="submit"
             className="border border-gold/40 bg-gold/[0.07] px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold/15"
@@ -192,11 +172,7 @@ export default async function AdminSettingsPage({
             className="field !py-2.5 !text-xs file:mr-3 file:border-0 file:bg-gold/20 file:px-3 file:py-1.5 file:font-mono file:text-[10px] file:font-bold file:uppercase file:tracking-widest file:text-gold"
             required
           />
-          <input
-            name="link"
-            placeholder="/betslip/1001"
-            className="field"
-          />
+          <input name="link" placeholder="/betslip/1001" className="field" />
           <button
             type="submit"
             className="border border-gold/40 bg-gold/[0.07] px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold/15"

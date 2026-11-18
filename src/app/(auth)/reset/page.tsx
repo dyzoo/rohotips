@@ -29,7 +29,7 @@ export default async function ResetPage({
           <label className="field-label" htmlFor="password">
             New password
           </label>
-          <PasswordInput name="password" id="password" className="field pr-12" toggleClassName="right-4 text-white/35" />
+          <PasswordInput name="password" id="password" className="field field-with-toggle" toggleClassName="right-4 text-white/35" />
         </div>
 
         <div>
@@ -39,7 +39,7 @@ export default async function ResetPage({
           <PasswordInput
             name="confirm_password"
             id="confirm_password"
-            className="field pr-12"
+            className="field field-with-toggle"
             toggleClassName="right-4 text-white/35"
           />
         </div>

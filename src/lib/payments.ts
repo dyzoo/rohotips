@@ -1,79 +1,78 @@
 import { readDb, withDb } from "./db";
 import { randomId } from "./crypto";
-import type { Order, PaymentMethod } from "./types";
+import type { Order, OrderStatus, PaymentMethod } from "./types";
 
-const mpesaConfigured = Boolean(
-  process.env.MPESA_CONSUMER_KEY &&
-    process.env.MPESA_CONSUMER_SECRET &&
-    process.env.MPESA_SHORTCODE &&
-    process.env.MPESA_PASSKEY &&
-    process.env.MPESA_CALLBACK_URL,
-);
+const HARAKAPAY_BASE_URL = "https://harakapay.net";
+const harakaConfigured = Boolean(process.env.HARAKAPAY_API_KEY);
 
-function phoneForDaraja(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.startsWith("0")) return `254${digits.slice(1)}`;
-  if (digits.startsWith("255")) return digits;
-  return digits;
-}
+type HarakaResponse = {
+  success?: boolean;
+  message?: string;
+  error?: string;
+};
 
-async function mpesaToken(): Promise<string> {
-  const auth = Buffer.from(
-    `${process.env.MPESA_CONSUMER_KEY}:${process.env.MPESA_CONSUMER_SECRET}`,
-  ).toString("base64");
-  const response = await fetch(
-    "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
-    { headers: { Authorization: `Basic ${auth}` }, cache: "no-store" },
-  );
-  if (!response.ok) throw new Error("M-Pesa authentication failed");
-  const data = (await response.json()) as { access_token: string };
-  return data.access_token;
-}
+type CollectResponse = HarakaResponse & {
+  order_id?: string;
+};
 
-async function mpesaStkPush(order: Order): Promise<{ checkoutRequestId: string; reference: string }> {
-  const token = await mpesaToken();
-  const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
-  const password = Buffer.from(
-    `${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`,
-  ).toString("base64");
-  const reference = `CT${order.id.slice(0, 8).toUpperCase()}`;
-  const response = await fetch(
-    "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        BusinessShortCode: process.env.MPESA_SHORTCODE,
-        Password: password,
-        Timestamp: timestamp,
-        TransactionType: "CustomerPayBillOnline",
-        Amount: Math.round(order.amount),
-        PartyA: phoneForDaraja(order.phone),
-        PartyB: process.env.MPESA_SHORTCODE,
-        PhoneNumber: phoneForDaraja(order.phone),
-        CallBackURL: process.env.MPESA_CALLBACK_URL,
-        AccountReference: reference,
-        TransactionDesc: `ChampeeTips slip ${order.slipId}`,
-      }),
-      cache: "no-store",
-    },
-  );
-  const data = (await response.json()) as {
-    CheckoutRequestID?: string;
-    ResponseCode?: string;
-    ResponseDescription?: string;
+type StatusResponse = HarakaResponse & {
+  payment?: {
+    status?: string;
   };
-  if (!response.ok || !data.CheckoutRequestID) {
-    throw new Error(data.ResponseDescription ?? "M-Pesa STK push failed");
+};
+
+function phoneForHarakapay(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("255")) return `0${digits.slice(3)}`;
+  if (digits.startsWith("254")) return `0${digits.slice(3)}`;
+  if (digits.startsWith("0")) return digits;
+  return `0${digits}`;
+}
+
+function webhookUrl(): string | undefined {
+  const configured = process.env.HARAKAPAY_WEBHOOK_URL?.trim();
+  if (configured) return configured;
+  const base = process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  return base ? `${base.replace(/\/$/, "")}/api/payments/harakapay` : undefined;
+}
+
+async function harakapayRequest<T extends HarakaResponse>(path: string, init: RequestInit = {}): Promise<T> {
+  const apiKey = process.env.HARAKAPAY_API_KEY;
+  if (!apiKey) throw new Error("HarakaPay is not configured");
+  const response = await fetch(`${HARAKAPAY_BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": apiKey,
+      ...(init.headers as Record<string, string> | undefined),
+    },
+    cache: "no-store",
+  });
+  const data = (await response.json().catch(() => ({}))) as T;
+  if (!response.ok || data.success === false) {
+    throw new Error(data.message ?? data.error ?? "HarakaPay request failed");
   }
-  return { checkoutRequestId: data.CheckoutRequestID, reference };
+  return data;
+}
+
+async function harakapayCollect(order: Order, description: string): Promise<string> {
+  const hook = webhookUrl();
+  const data = await harakapayRequest<CollectResponse>("/api/v1/collect", {
+    method: "POST",
+    body: JSON.stringify({
+      phone: phoneForHarakapay(order.phone),
+      amount: Math.round(order.amount),
+      description: description.slice(0, 120),
+      ...(hook ? { webhook_url: hook } : {}),
+    }),
+  });
+  if (!data.order_id) throw new Error(data.message ?? "HarakaPay did not return an order id");
+  return data.order_id;
 }
 
 export function paymentMode(): "demo" | "live" {
-  return mpesaConfigured ? "live" : "demo";
+  return harakaConfigured ? "live" : "demo";
 }
 
 export async function createOrder(
@@ -82,19 +81,19 @@ export async function createOrder(
   method: PaymentMethod,
   phone: string,
 ): Promise<Order> {
-  const slip = await withDb((db) => db.slips.find((entry) => entry.id === slipId) ?? null);
+  const snapshot = await readDb();
+  const slip = snapshot.slips.find((entry) => entry.id === slipId);
   if (!slip || slip.status !== "active") throw new Error("This betslip is not available");
   if (new Date(slip.validity).getTime() <= Date.now()) throw new Error("This betslip has expired");
 
-  const previous = (await readDb()).orders.find(
+  const previous = snapshot.orders.find(
     (entry) => entry.userId === userId && entry.slipId === slipId && entry.status === "pending",
   );
   if (previous) return previous;
 
   const order = await withDb((db) => {
     const existing = db.orders.find(
-      (entry) =>
-        entry.userId === userId && entry.slipId === slipId && entry.status === "paid",
+      (entry) => entry.userId === userId && entry.slipId === slipId && entry.status === "paid",
     );
     if (existing) throw new Error("You already purchased this betslip");
     const created: Order = {
@@ -107,7 +106,7 @@ export async function createOrder(
       status: "pending",
       reference: `CT-${randomId(5).toUpperCase()}`,
       checkoutRequestId: "",
-      mode: mpesaConfigured && method === "M-Pesa" ? "live" : "demo",
+      mode: harakaConfigured && method === "M-Pesa" ? "live" : "demo",
       createdAt: new Date().toISOString(),
     };
     db.orders.push(created);
@@ -116,16 +115,16 @@ export async function createOrder(
 
   if (order.mode === "live") {
     try {
-      const result = await mpesaStkPush(order);
+      if (order.amount < 100) throw new Error("The minimum payment is TZS 100");
+      const harakaOrderId = await harakapayCollect(
+        order,
+        `${snapshot.settings.siteName} - ${slip.title}`,
+      );
       await withDb((db) => {
         const target = db.orders.find((entry) => entry.id === order.id);
-        if (target) {
-          target.checkoutRequestId = result.checkoutRequestId;
-          target.reference = result.reference;
-        }
+        if (target) target.checkoutRequestId = harakaOrderId;
       });
-      order.checkoutRequestId = result.checkoutRequestId;
-      order.reference = result.reference;
+      order.checkoutRequestId = harakaOrderId;
     } catch (error) {
       await markOrderFailed(order.id);
       throw error;
@@ -140,6 +139,33 @@ export async function createOrder(
   }
 
   return order;
+}
+
+export async function syncOrderFromHarakapay(orderId: string): Promise<OrderStatus | null> {
+  if (!harakaConfigured) return null;
+  const order = (await readDb()).orders.find((entry) => entry.id === orderId);
+  if (
+    !order ||
+    order.status !== "pending" ||
+    order.mode !== "live" ||
+    !order.checkoutRequestId
+  ) {
+    return null;
+  }
+
+  const data = await harakapayRequest<StatusResponse>(
+    `/api/v1/status/${encodeURIComponent(order.checkoutRequestId)}`,
+  );
+  const status = data.payment?.status?.toLowerCase();
+  if (status === "completed") {
+    await markOrderPaid("", order.checkoutRequestId);
+    return "paid";
+  }
+  if (status === "failed" || status === "cancelled") {
+    await markOrderFailed(order.id);
+    return "failed";
+  }
+  return order.status;
 }
 
 export async function markOrderPaid(reference: string, checkoutRequestId = ""): Promise<Order | null> {

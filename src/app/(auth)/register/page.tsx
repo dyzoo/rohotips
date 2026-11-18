@@ -21,7 +21,7 @@ export default async function RegisterPage({
   return (
     <ModernAuthShell
       title="Create account"
-      subtitle="          Join the desk and get daily winning tips delivered."
+      subtitle="Join the desk and get daily winning tips delivered."
       footer={
         <>
           Already have an account?{" "}
@@ -59,7 +59,7 @@ export default async function RegisterPage({
               type="text"
               name="username"
               placeholder="John Doe"
-              className="field pl-11"
+              className="field field-with-icon"
               autoComplete="name"
               required
             />
@@ -83,7 +83,7 @@ export default async function RegisterPage({
               type="email"
               name="email"
               placeholder="you@example.com"
-              className="field pl-11"
+              className="field field-with-icon"
               autoComplete="email"
               required
             />
@@ -107,7 +107,7 @@ export default async function RegisterPage({
               type="tel"
               name="phone"
               placeholder="+255 700 000000"
-              className="field pl-11"
+              className="field field-with-icon"
               autoComplete="tel"
               required
             />
@@ -130,7 +130,7 @@ export default async function RegisterPage({
               name="password"
               id="password"
               placeholder="At least 6 characters"
-              className="field pl-11 pr-12"
+              className="field field-with-icon field-with-toggle"
               toggleClassName="right-4 text-white/35 transition hover:text-white"
             />
           </div>
@@ -152,7 +152,7 @@ export default async function RegisterPage({
               name="confirm_password"
               id="confirm_password"
               placeholder="Repeat your password"
-              className="field pl-11 pr-12"
+              className="field field-with-icon field-with-toggle"
               toggleClassName="right-4 text-white/35 transition hover:text-white"
             />
           </div>
