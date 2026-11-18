@@ -570,3 +570,31 @@ table.admin-table tbody tr {
 table.admin-table tbody tr:hover {
   background: rgba(220, 185, 127, 0.04);
 }
+
+@media (max-width: 640px) {
+  .betslip-card {
+    border-radius: 18px;
+    padding: 12px;
+  }
+
+  .betslip-divider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .betslip-odds-label {
+    margin-top: 4px;
+  }
+
+  .betslip-meta {
+    margin-top: 10px;
+  }
+
+  .betslip-logo {
+    margin-top: 8px;
+  }
+
+  .betslip-view {
+    margin-top: 14px;
+  }
+}

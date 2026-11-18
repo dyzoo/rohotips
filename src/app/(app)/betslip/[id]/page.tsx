@@ -168,7 +168,7 @@ export default async function BetslipPage({
               />
 
               <button type="submit" className="btn-gold betslip-pay-button">
-                Pay {money(slip.price)}
+                Pay {money(slip.price)} to Unlock
               </button>
             </form>
           </div>

@@ -26,7 +26,7 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
 
   return (
     <div
-      className="hero-frame mb-7"
+      className="hero-frame mb-3 sm:mb-7"
       onTouchStart={(event) => {
         touchStart.current = event.touches[0].clientX;
       }}
@@ -42,7 +42,7 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
       >
         {slides.map((slide) => (
           <div key={slide.id} className="w-full shrink-0">
-            <Link href={slide.link} className="relative block aspect-video w-full" aria-label="Open promotion">
+            <Link href={slide.link} className="relative block aspect-[2.4/1] w-full sm:aspect-video" aria-label="Open promotion">
               <Image
                 src={slide.image}
                 alt="Promotion"

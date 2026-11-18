@@ -47,18 +47,18 @@ export function BetslipCard({
         <span className="tag max-w-[40%] truncate">{slip.category}</span>
       </div>
 
-      <div className="mt-5 mb-[23px] border-t border-white/[0.07]" />
+      <div className="betslip-divider mt-5 mb-[23px] border-t border-white/[0.07]" />
 
       <div className="text-left">
         <p className="num text-[25px] font-bold leading-none text-white">
           {slip.odds.toFixed(2)}
         </p>
-        <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/35">
+        <p className="betslip-odds-label mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/35">
           Combined odds
         </p>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+      <div className="betslip-meta mt-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <span className="flex min-w-0 items-center gap-1.5 text-[11px] text-white/40">
           <span className="shrink-0">Closes in</span>
           <span className="num">
@@ -69,7 +69,7 @@ export function BetslipCard({
       </div>
 
       {slip.logo ? (
-        <div className="mt-4 flex h-7 w-[70px] items-center">
+        <div className="betslip-logo mt-4 flex h-7 w-[70px] items-center">
           <Image
             src={slip.logo}
             alt=""
@@ -81,7 +81,7 @@ export function BetslipCard({
         </div>
       ) : null}
 
-      <Link href={`/betslip/${slip.id}`} className="btn-gold betslip-action mt-8">
+      <Link href={`/betslip/${slip.id}`} className="btn-gold betslip-action betslip-view mt-8">
         View slip
       </Link>
     </article>

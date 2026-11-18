@@ -43,39 +43,30 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="eyebrow">Daily briefing / {new Date().getFullYear()}</p>
-          <h1 className="mt-1 text-3xl font-black tracking-tight text-white sm:text-4xl">
-            The <span className="gold-text">tip desk</span>
-          </h1>
-          <p className="mt-2 text-sm text-white/45">Curated slips, clear odds, fast payment.</p>
-        </div>
-        <span className="hidden text-xs text-white/35 sm:block">Tanzania · EAT</span>
-      </div>
+      <h1 className="sr-only">{settings.siteName}</h1>
 
       <HeroSlider slides={sliders} />
 
       {settings.announcement ? (
-        <div className="mb-6 flex items-start gap-3 border-l-2 border-gold bg-gold/[0.05] px-3 py-3">
+        <div className="mb-3 flex items-start gap-2.5 border-l-2 border-gold bg-gold/[0.05] px-3 py-2 sm:mb-6 sm:gap-3 sm:py-3">
           <span className="live-indicator mt-1" />
-          <p className="text-[12px] leading-relaxed text-gold/90">{settings.announcement}</p>
+          <p className="text-[11px] leading-relaxed text-gold/90 sm:text-[12px]">{settings.announcement}</p>
         </div>
       ) : null}
 
-      <div className="mb-5 flex items-center justify-between gap-3">
+      <div className="mb-2.5 flex items-center justify-between gap-3 sm:mb-5">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="live-indicator shrink-0" aria-hidden="true" />
-          <h2 className="truncate text-[17px] font-extrabold tracking-tight text-white sm:text-xl">
+          <h2 className="truncate text-[15px] font-extrabold tracking-tight text-white sm:text-xl">
             Active betslips
           </h2>
         </div>
         <span className="count-badge">{String(slips.length).padStart(2, "0")} live</span>
       </div>
 
-      <div id="tipsContainer" className="stagger grid gap-5 md:grid-cols-2">
+      <div id="tipsContainer" className="stagger grid gap-3 sm:gap-5 md:grid-cols-2">
         {slips.length === 0 ? (
-          <div className="panel-plain px-5 py-14 text-center md:col-span-2">
+          <div className="panel-plain px-5 py-8 text-center sm:py-14 md:col-span-2">
             <p className="eyebrow mb-3">Desk closed</p>
             <p className="text-[15px] text-white/45">
               No active betslips at the moment.
@@ -95,7 +86,7 @@ export default async function HomePage() {
         )}
       </div>
 
-      <p className="mt-8 border-t border-white/[0.07] pt-5 text-center font-mono text-[10px] leading-relaxed tracking-wide text-white/30">
+      <p className="mt-3 border-t border-white/[0.07] pt-3 text-center font-mono text-[9px] leading-relaxed tracking-wide text-white/30 sm:mt-8 sm:pt-5 sm:text-[10px]">
         Betting involves risk. Play responsibly.{" "}
         <Link href="/support" className="text-gold/80 hover:text-gold">
           Need help?

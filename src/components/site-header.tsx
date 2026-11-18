@@ -10,14 +10,14 @@ export async function SiteHeader() {
 
   return (
     <header className="masthead">
-      <div className="mx-auto flex max-w-[960px] items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-[960px] items-center justify-between gap-3 px-4 py-2 sm:px-6 sm:py-3 lg:px-8">
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <span className="grid h-9 w-11 shrink-0 place-items-center rounded-lg border border-gold/25 bg-black/40">
             <Image src="/roho_logo.jpg" width={44} height={30} alt="Site logo" unoptimized />
           </span>
           <span className="min-w-0">
             <span className="page-title block truncate">{settings.siteName}</span>
-            <span className="mt-0.5 block text-[10px] tracking-wide text-white/35">Sure tips / Tanzania</span>
+            <span className="mt-0.5 hidden text-[10px] tracking-wide text-white/35 sm:block">Sure tips / Tanzania</span>
           </span>
         </Link>
 
