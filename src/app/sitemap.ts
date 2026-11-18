@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { findActiveSlips } from "@/lib/db";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://champeetips.com";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://rohotips.co.tz";
 
 export const dynamic = "force-dynamic";
 

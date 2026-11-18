@@ -44,8 +44,8 @@ export function buildSeed(): Db {
     users: [
       {
         id: "admin-rohotips",
-        name: "Champee Admin",
-        email: "admin@champeetips.com",
+        name: "Roho Admin",
+        email: "admin@rohotips.co.tz",
         phone: "+255796184234",
         passwordHash: hashPassword("admin123"),
         role: "admin",
@@ -55,7 +55,7 @@ export function buildSeed(): Db {
       {
         id: "demo-user",
         name: "Demo User",
-        email: "demo@champeetips.com",
+        email: "demo@rohotips.co.tz",
         phone: "+255700000000",
         passwordHash: hashPassword("demo123"),
         role: "user",
@@ -80,12 +80,12 @@ export function buildSeed(): Db {
     resets: [],
     brandLogos: {},
     settings: {
-      siteName: "CHAMPEETIPS",
+      siteName: "ROHO TIPS",
       supportPhone: "0796184234",
       whatsapp: "255796184234",
-      email: "support@champeetips.com",
+      email: "support@rohotips.co.tz",
       announcement: "Mikeka ya uhakika kila siku - lipa kwa M-Pesa.",
-      adminName: "Champee Admin",
+      adminName: "Roho Admin",
       adminAvatar: "/avatar.svg",
     },
   };

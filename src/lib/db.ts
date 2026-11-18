@@ -26,7 +26,7 @@ function normalize(db: Db): Db {
   db.sessions ??= [];
   db.orders ??= [];
   db.brandLogos ??= {};
-  db.settings.adminName ??= "Champee Admin";
+  db.settings.adminName ??= "Roho Admin";
   db.settings.adminAvatar ??= "/avatar.svg";
   for (const slip of db.slips) {
     Reflect.deleteProperty(slip, "matches");
@@ -40,16 +40,20 @@ function normalize(db: Db): Db {
     db.carouselMediaSeeded = true;
   }
 
-  if (db.settings.siteName === "ROHOTIPS") db.settings.siteName = "CHAMPEETIPS";
-  if (db.settings.email === "support@rohotips.co.tz") db.settings.email = "support@champeetips.com";
+  if (db.settings.siteName === "CHAMPEETIPS" || db.settings.siteName === "ROHOTIPS") {
+    db.settings.siteName = "ROHO TIPS";
+  }
+  if (db.settings.adminName === "Champee Admin") db.settings.adminName = "Roho Admin";
+  if (db.settings.email === "support@champeetips.com") db.settings.email = "support@rohotips.co.tz";
   for (const user of db.users) {
+    if (user.name === "Champee Admin") user.name = "Roho Admin";
     if (user.id === "admin-rohotips") {
-      user.name ||= "Champee Admin";
-      if (!user.email || user.email === "admin@rohotips.co.tz") {
-        user.email = "admin@champeetips.com";
+      user.name ||= "Roho Admin";
+      if (!user.email || user.email === "admin@champeetips.com") {
+        user.email = "admin@rohotips.co.tz";
       }
-    } else if (user.id === "demo-user" && user.email === "demo@rohotips.co.tz") {
-      user.email = "demo@champeetips.com";
+    } else if (user.id === "demo-user" && user.email === "demo@champeetips.com") {
+      user.email = "demo@rohotips.co.tz";
     }
   }
 
@@ -106,7 +110,7 @@ export async function readDb(): Promise<Db> {
     "SELECT data FROM rohotips_state WHERE id = 1",
   );
   const db = result.rows[0]?.data;
-  if (!db) throw new Error("ChampeeTips database is not initialized");
+  if (!db) throw new Error("ROHO TIPS database is not initialized");
   return normalize(db);
 }
 
@@ -119,7 +123,7 @@ export async function withDb<T>(mutate: (db: Db) => T | Promise<T>): Promise<T> 
       "SELECT data FROM rohotips_state WHERE id = 1 FOR UPDATE",
     );
     const db = result.rows[0]?.data;
-    if (!db) throw new Error("ChampeeTips database is not initialized");
+    if (!db) throw new Error("ROHO TIPS database is not initialized");
     const value = await mutate(normalize(db));
     await client.query(
       "UPDATE rohotips_state SET data = $1::jsonb, updated_at = now() WHERE id = 1",

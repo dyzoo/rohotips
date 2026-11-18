@@ -1,6 +1,6 @@
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
-const secret = process.env.AUTH_SECRET ?? "champeetips-local-development-secret";
+const secret = process.env.AUTH_SECRET ?? "rohotips-local-development-secret";
 
 export function randomId(bytes = 16): string {
   return randomBytes(bytes).toString("hex");

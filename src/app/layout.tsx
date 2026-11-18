@@ -16,13 +16,13 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://champeetips.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://rohotips.co.tz"),
   title: {
-    default: "CHAMPEETIPS - Mikeka ya Uhakika & Betting Tips Tanzania",
-    template: "%s | CHAMPEETIPS",
+    default: "ROHO TIPS - Mikeka ya Uhakika & Betting Tips Tanzania",
+    template: "%s | ROHO TIPS",
   },
   description:
-    "Pata mikeka ya uhakika, odds kubwa na tips za ushindi kila siku kutoka CHAMPEETIPS. Uchambuzi wa kina na malipo ya haraka kupitia M-Pesa.",
+    "Pata mikeka ya uhakika, odds kubwa na tips za ushindi kila siku kutoka ROHO TIPS. Uchambuzi wa kina na malipo ya haraka kupitia M-Pesa.",
   keywords: [
     "betting tips tanzania",
     "mikeka ya uhakika",
@@ -32,22 +32,30 @@ export const metadata: Metadata = {
     "odds kubwa",
     "kiberenge",
     "mkeka wa uhakika",
-    "CHAMPEETIPS",
+    "ROHO TIPS",
   ],
-  applicationName: "CHAMPEETIPS",
-  authors: [{ name: "CHAMPEETIPS" }],
+  applicationName: "ROHO TIPS",
+  authors: [{ name: "ROHO TIPS" }],
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/icon-192.png",
+  },
   openGraph: {
     type: "website",
     locale: "sw_TZ",
-    siteName: "CHAMPEETIPS",
-    title: "CHAMPEETIPS - Nyumbani kwa Mikeka ya Uhakika",
-    description: "Pata mikeka ya uhakika na tips za ushindi kila siku kutoka CHAMPEETIPS.",
+    siteName: "ROHO TIPS",
+    title: "ROHO TIPS - Nyumbani kwa Mikeka ya Uhakika",
+    description: "Pata mikeka ya uhakika na tips za ushindi kila siku kutoka ROHO TIPS.",
     images: ["/banner-1.svg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CHAMPEETIPS - Nyumbani",
-    description: "Pata mikeka ya uhakika na tips za ushindi kila siku kutoka CHAMPEETIPS.",
+    title: "ROHO TIPS - Nyumbani",
+    description: "Pata mikeka ya uhakika na tips za ushindi kila siku kutoka ROHO TIPS.",
     images: ["/banner-1.svg"],
   },
 };

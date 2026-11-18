@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AppDownloadButton } from "@/components/app-download-button";
 import { getCurrentUser } from "@/lib/auth";
 import { getSettings } from "@/lib/db";
 import { initials } from "@/lib/format";
@@ -20,7 +21,8 @@ export async function SiteHeader() {
           </span>
         </Link>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <AppDownloadButton />
           <span className="hidden items-center gap-2 sm:flex">
             <span className="live-indicator" />
             <span className="text-[10px] font-semibold uppercase tracking-widest text-white/45">Live desk</span>
