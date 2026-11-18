@@ -63,10 +63,12 @@ export default async function HomePage() {
         </div>
       ) : null}
 
-      <div className="section-head">
-        <div>
-          <p className="eyebrow">Section 01 / Open now</p>
-          <h2>Active betslips</h2>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="live-indicator shrink-0" aria-hidden="true" />
+          <h2 className="truncate text-[17px] font-extrabold tracking-tight text-white sm:text-xl">
+            Active betslips
+          </h2>
         </div>
         <span className="count-badge">{String(slips.length).padStart(2, "0")} live</span>
       </div>

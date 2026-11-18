@@ -10,12 +10,12 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; reset?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; reset?: string; next?: string; registered?: string }>;
 }) {
   const current = await getCurrentUser();
   if (current) redirect("/");
 
-  const { error, reset, next } = await searchParams;
+  const { error, reset, next, registered } = await searchParams;
   const csrf = await csrfToken();
 
   return (
@@ -33,6 +33,7 @@ export default async function LoginPage({
     >
       {error ? <p className="alert-error mb-5">Wrong username or password. Please try again.</p> : null}
       {reset ? <p className="alert-success mb-5">Password updated. Log in with your new password.</p> : null}
+      {registered ? <p className="alert-success mb-5">Account created successfully. Please sign in to continue.</p> : null}
 
       <form method="post" action={loginAction} className="space-y-5">
         <input type="hidden" name="csrf" value={csrf} />

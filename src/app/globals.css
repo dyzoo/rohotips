@@ -103,6 +103,16 @@ textarea:focus-visible {
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
 }
 
+.betslip-card {
+  border-radius: 21px;
+  padding: 16px;
+}
+
+.betslip-detail-card {
+  border-radius: 20px;
+  padding: 16px;
+}
+
 .panel-plain {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
@@ -181,6 +191,19 @@ textarea:focus-visible {
   transform: translateY(0);
 }
 
+.betslip-action {
+  height: 52px;
+  padding: 0 16px;
+  border-radius: 13px;
+}
+
+.betslip-pay-button {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 20px;
+  font-size: 11px;
+}
+
 .btn-outline {
   display: block;
   width: 100%;
@@ -233,6 +256,13 @@ textarea:focus-visible {
   border-color: rgba(220, 185, 127, 0.6);
   background: rgba(0, 0, 0, 0.45);
   box-shadow: 0 0 0 4px rgba(220, 185, 127, 0.1);
+}
+
+.betslip-phone-field {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 11px;
 }
 
 .field-label {

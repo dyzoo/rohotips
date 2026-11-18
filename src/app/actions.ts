@@ -100,8 +100,7 @@ export async function registerAction(formData: FormData): Promise<void> {
           verified: true,
         });
       });
-      await createSession(id);
-      target = "/";
+      target = "/login?registered=1";
     } else if (exists) {
       target = "/register?error=exists";
     }
