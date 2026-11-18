@@ -16,11 +16,13 @@ export function SlipForm({
   csrf,
   slip,
   error,
+  logos,
 }: {
   action: (formData: FormData) => void | Promise<void>;
   csrf: string;
   slip?: Betslip;
   error?: string;
+  logos: Record<string, string>;
 }) {
   const defaultValidity = slip ? toLocalInput(slip.validity) : defaultValidityInput();
 
@@ -30,7 +32,9 @@ export function SlipForm({
       <h1 className="mt-1 text-2xl font-black tracking-tight text-white">
         {slip ? "Edit betslip" : "New betslip"}
       </h1>
-      <p className="mb-6 mt-1 text-xs text-white/40">Set the slip details and upload the logo shown to customers.</p>
+      <p className="mb-6 mt-1 text-xs text-white/40">
+        Set the slip details and choose or upload the logo shown to customers.
+      </p>
 
       {error ? <p className="alert-error mb-4">{error}</p> : null}
 
@@ -79,13 +83,34 @@ export function SlipForm({
           </label>
         </div>
 
+        <label className="block">
+          <span className="field-label">Saved bookmaker logo</span>
+          <select
+            name="savedLogo"
+            defaultValue={slip?.logo && Object.values(logos).includes(slip.logo) ? slip.logo : ""}
+            className="field"
+          >
+            <option value="">
+              {slip?.logo ? "Keep current / match category" : "Auto by category or upload below"}
+            </option>
+            {Object.entries(logos).map(([name, url]) => (
+              <option key={name} value={url}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <span className="mt-1.5 block text-[11px] leading-relaxed text-white/35">
+            Uploaded logos are saved here and reused automatically for the same category.
+          </span>
+        </label>
+
         {slip?.logo ? (
           <div className="flex items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-3">
             <span className="flex h-10 w-24 shrink-0 items-center justify-center rounded bg-white px-2">
               <Image src={slip.logo} alt="Current logo" width={80} height={26} className="h-6 w-auto object-contain" unoptimized />
             </span>
             <span className="text-xs text-white/45">
-              Current logo. Upload a new one to replace it.
+              Current logo. Choose a saved logo or upload a new one to replace it.
             </span>
           </div>
         ) : null}
@@ -97,7 +122,7 @@ export function SlipForm({
           defaultWidth={360}
           minWidth={180}
           maxWidth={720}
-          hint="Resize and crop the logo before saving it with this betslip."
+          hint="Resize and crop the logo before saving it with this betslip and future slips."
         />
 
         <div className="flex flex-wrap gap-3 pt-1">

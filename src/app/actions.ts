@@ -43,9 +43,35 @@ async function saveUpload(file: File, prefix: string): Promise<string> {
   return `/api/media/${id}`;
 }
 
-async function saveSlipLogo(formData: FormData): Promise<string | null> {
+function brandKey(category: string): string {
+  return category.trim().toLowerCase();
+}
+
+async function resolveSlipLogo(
+  formData: FormData,
+  slip: Pick<Betslip, "category">,
+  currentLogo = "",
+): Promise<string | undefined> {
   const file = uploadedFile(formData, "bookmakerLogo");
-  return file ? saveUpload(file, "bookmaker") : null;
+  if (file) {
+    const image = await saveUpload(file, "bookmaker");
+    const key = brandKey(slip.category);
+    if (key) {
+      await withDb((db) => {
+        db.brandLogos[key] = image;
+      });
+    }
+    return image;
+  }
+
+  const db = await readDb();
+  const selected = text(formData, "savedLogo") || text(formData, "existingLogo");
+  const allowed = new Set(Object.values(db.brandLogos));
+  if (currentLogo) allowed.add(currentLogo);
+  if (selected && allowed.has(selected)) return selected;
+
+  const key = brandKey(slip.category);
+  return key ? db.brandLogos[key] : undefined;
 }
 
 export async function loginAction(formData: FormData): Promise<void> {
@@ -201,7 +227,6 @@ export async function orderStatusAction(
 }
 
 function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
-  const existingLogo = text(formData, "existingLogo");
   const rawValidity = text(formData, "validity");
   const parsedValidity = rawValidity ? new Date(rawValidity) : new Date(Number.NaN);
   const validity = Number.isFinite(parsedValidity.getTime()) ? parsedValidity.toISOString() : "";
@@ -213,7 +238,6 @@ function parseSlip(formData: FormData, id: string): Omit<Betslip, "createdAt"> {
     odds: Number(text(formData, "odds")) || 0,
     price: Number(text(formData, "price")) || 0,
     validity,
-    logo: existingLogo || undefined,
     status: text(formData, "status") === "inactive" ? "inactive" : "active",
   };
 }
@@ -224,18 +248,18 @@ export async function createSlipAction(formData: FormData): Promise<void> {
   if (await verifyCsrf(formData)) {
     const id = newId();
     const slip = parseSlip(formData, id);
-    try {
-      const logo = await saveSlipLogo(formData);
-      if (slip.title && slip.category && slip.odds > 0 && slip.price > 0 && Number.isFinite(new Date(slip.validity).getTime())) {
+    if (slip.title && slip.category && slip.odds > 0 && slip.price > 0 && Number.isFinite(new Date(slip.validity).getTime())) {
+      try {
+        const logo = await resolveSlipLogo(formData, slip);
         await withDb((db) => {
-          db.slips.push({ ...slip, logo: logo ?? slip.logo, createdAt: new Date().toISOString() });
+          db.slips.push({ ...slip, logo, createdAt: new Date().toISOString() });
         });
         revalidatePath("/", "layout");
         revalidatePath("/admin/slips");
         target = "/admin/slips?saved=created";
+      } catch {
+        target = "/admin/slips/new?error=upload";
       }
-    } catch {
-      target = "/admin/slips/new?error=upload";
     }
   }
   redirect(target);
@@ -247,19 +271,20 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
   let target = `/admin/slips/${id}/edit?error=invalid`;
   if (await verifyCsrf(formData)) {
     const updated = parseSlip(formData, id);
-    try {
-      const logo = await saveSlipLogo(formData);
-      if (
-        updated.title &&
-        updated.category &&
-        updated.odds > 0 &&
-        updated.price > 0 &&
-        Number.isFinite(new Date(updated.validity).getTime())
-      ) {
+    if (
+      updated.title &&
+      updated.category &&
+      updated.odds > 0 &&
+      updated.price > 0 &&
+      Number.isFinite(new Date(updated.validity).getTime())
+    ) {
+      try {
+        const currentLogo = (await readDb()).slips.find((entry) => entry.id === id)?.logo ?? "";
+        const logo = await resolveSlipLogo(formData, updated, currentLogo);
         const found = await withDb((db) => {
           const index = db.slips.findIndex((entry) => entry.id === id);
           if (index < 0) return false;
-          db.slips[index] = { ...updated, logo: logo ?? updated.logo, createdAt: db.slips[index].createdAt };
+          db.slips[index] = { ...updated, logo, createdAt: db.slips[index].createdAt };
           return true;
         });
         if (found) {
@@ -267,9 +292,9 @@ export async function updateSlipAction(formData: FormData): Promise<void> {
           revalidatePath("/admin/slips");
           target = "/admin/slips?saved=updated";
         }
+      } catch {
+        target = `/admin/slips/${id}/edit?error=upload`;
       }
-    } catch {
-      target = `/admin/slips/${id}/edit?error=upload`;
     }
   }
   redirect(target);
