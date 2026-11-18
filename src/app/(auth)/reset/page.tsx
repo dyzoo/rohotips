@@ -19,46 +19,37 @@ export default async function ResetPage({
     <AuthShell title="New Password" backHref="/login">
       {error ? <p className="alert-error mb-5">Passwords must match and be at least 6 characters.</p> : null}
 
-      <form method="post" action={resetPasswordAction}>
+      <form method="post" action={resetPasswordAction} className="space-y-5">
         <input type="hidden" name="csrf" value={csrf} />
         <input type="hidden" name="token" value={token} />
 
-        <div className="auth-card mb-8">
-          <p className="mb-6 text-sm font-medium text-[#3e3423]">Choose a new password for your account</p>
+        <p className="text-sm leading-relaxed text-white/50">Choose a new password for your account.</p>
 
-          <div className="mb-5">
-            <label className="input-label" htmlFor="password">
-              New Password
-            </label>
-            <div className="relative">
-              <svg className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 text-[#3e3423]/70" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-              </svg>
-              <PasswordInput name="password" id="password" />
-            </div>
-          </div>
-
-          <div>
-            <label className="input-label" htmlFor="confirm_password">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <svg className="absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 text-[#3e3423]/70" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-              </svg>
-              <PasswordInput name="confirm_password" id="confirm_password" />
-            </div>
-          </div>
+        <div>
+          <label className="field-label" htmlFor="password">
+            New password
+          </label>
+          <PasswordInput name="password" id="password" className="field pr-12" toggleClassName="right-4 text-white/35" />
         </div>
 
-        <div className="flex items-center justify-end gap-3">
-          <span className="gold-text text-lg font-medium tracking-wide">Save</span>
-          <button type="submit" className="btn-round" aria-label="Save new password">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-            </svg>
-          </button>
+        <div>
+          <label className="field-label" htmlFor="confirm_password">
+            Confirm password
+          </label>
+          <PasswordInput
+            name="confirm_password"
+            id="confirm_password"
+            className="field pr-12"
+            toggleClassName="right-4 text-white/35"
+          />
         </div>
+
+        <button type="submit" className="btn-gold flex items-center justify-center gap-2">
+          Save password
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M4 12l5 5L20 6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </form>
     </AuthShell>
   );

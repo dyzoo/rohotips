@@ -21,92 +21,74 @@ export default async function CheckoutPage({ params }: { params: Promise<{ order
     <div className="animate-enter">
       <Link
         href={`/betslip/${order.slipId}`}
-        className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white/70 transition hover:text-gold"
+        className="mb-5 inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-white/45 transition hover:text-gold"
       >
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M19 12H5M12 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        Back
+        Back to slip
       </Link>
 
-      <div className="rounded-3xl border border-white/10 bg-[#121212] p-6">
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <h1 className="text-xl font-extrabold text-white">Payment</h1>
+      <div className="panel p-5">
+        <div className="panel-head">
+          <div>
+            <p className="eyebrow !text-[9px]">Payment / {order.reference}</p>
+            <h1 className="mt-1 text-lg font-extrabold uppercase tracking-wide text-white">Checkout</h1>
+          </div>
           <PaymentPoller orderId={order.id} initialStatus={order.status} />
         </div>
 
-        <div className="mb-5 space-y-3 rounded-2xl border border-white/5 bg-black/30 p-4 text-sm">
-          <div className="flex justify-between gap-3">
-            <span className="text-[#888]">Betslip</span>
-            <span className="text-right font-semibold text-white">{slip?.title ?? order.slipId}</span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-[#888]">Amount</span>
-            <span className="font-black text-gold">{money(order.amount)}</span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-[#888]">Method</span>
-            <span className="font-semibold text-white">{order.method}</span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-[#888]">Phone</span>
-            <span className="font-semibold text-white">{order.phone}</span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-[#888]">Reference</span>
-            <span className="font-mono text-xs font-semibold text-white">{order.reference}</span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-[#888]">Created</span>
-            <span className="text-right text-xs font-semibold text-white">{dateLabel(order.createdAt)}</span>
-          </div>
+        <div className="mb-5 border-y border-white/[0.07] py-2 font-mono text-[11px]">
+          {[
+            { label: "Betslip", value: slip?.title ?? order.slipId },
+            { label: "Amount", value: money(order.amount), gold: true },
+            { label: "Method", value: order.method },
+            { label: "Phone", value: order.phone },
+            { label: "Reference", value: order.reference },
+            { label: "Created", value: dateLabel(order.createdAt) },
+          ].map((row) => (
+            <div key={row.label} className="flex justify-between gap-3 border-b border-white/[0.05] py-2 last:border-b-0">
+              <span className="uppercase tracking-widest text-white/35">{row.label}</span>
+              <span className={`text-right font-bold ${row.gold ? "text-gold" : "text-white"}`}>{row.value}</span>
+            </div>
+          ))}
         </div>
 
         {order.status === "paid" ? (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-4 text-center">
-              <p className="text-sm font-bold text-emerald-300">Payment received. Your betslip is unlocked.</p>
+            <div className="alert-success text-center">
+              Payment received. Your betslip is unlocked.
             </div>
             {slip ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gold/25 bg-gold/5 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border border-gold/30 bg-gold/[0.06] p-4">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-gold/70">Booking code</p>
-                  <p className="mt-1 font-mono text-xl font-black tracking-widest text-gold">{slip.code}</p>
+                  <p className="eyebrow !text-[9px]">Booking code</p>
+                  <p className="num mt-1 text-xl font-bold tracking-widest text-gold">{slip.code}</p>
                 </div>
                 <CopyButton value={slip.code} />
               </div>
             ) : null}
-            <Link
-              href={`/betslip/${order.slipId}`}
-              className="gold-gradient block rounded-xl py-4 text-center text-sm font-extrabold uppercase tracking-wide text-[#0a0a0a]"
-            >
-              View unlocked betslip
+            <Link href={`/betslip/${order.slipId}`} className="btn-gold">
+              View unlocked slip
             </Link>
           </div>
         ) : order.status === "pending" ? (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-gold/20 bg-gold/5 p-4 text-center text-sm text-gold">
+            <div className="border-l-2 border-gold bg-gold/[0.06] p-4 text-sm leading-relaxed text-gold/90">
               {order.mode === "live"
                 ? `A payment request was sent to ${order.phone}. Enter your M-Pesa PIN to complete the payment.`
                 : "We are confirming your payment. This page will update automatically once it is received."}
             </div>
-
-            <Link
-              href="/mybets"
-              className="block rounded-xl border border-white/10 py-3 text-center text-xs font-bold uppercase tracking-wide text-white/70"
-            >
+            <Link href="/mybets" className="btn-outline">
               Check my bets
             </Link>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-red-500/25 bg-red-500/5 p-4 text-center text-sm text-red-300">
+            <div className="alert-error text-center">
               This payment was {order.status}. You can try again from the betslip page.
             </div>
-            <Link
-              href={`/betslip/${order.slipId}`}
-              className="block rounded-xl border border-white/10 py-3 text-center text-xs font-bold uppercase tracking-wide text-white/70"
-            >
+            <Link href={`/betslip/${order.slipId}`} className="btn-outline">
               Try again
             </Link>
           </div>

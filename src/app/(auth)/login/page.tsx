@@ -24,7 +24,7 @@ export default async function LoginPage({
       subtitle="Sign in to unlock today's sure tips and booking codes."
       footer={
         <>
-          New to ChampeeTips?{" "}
+          New to the desk?{" "}
           <Link href="/register" className="font-bold text-gold hover:text-gold-soft">
             Create an account
           </Link>
@@ -55,7 +55,7 @@ export default async function LoginPage({
               type="text"
               name="login"
               placeholder="you@example.com"
-              className="modern-input pl-11"
+              className="field pl-11"
               autoComplete="username"
               required
             />
@@ -78,7 +78,7 @@ export default async function LoginPage({
               name="password"
               id="password"
               placeholder="Enter your password"
-              className="modern-input pl-11 pr-12"
+              className="field pl-11 pr-12"
               toggleClassName="right-4 text-white/35 transition hover:text-white"
             />
           </div>
@@ -96,7 +96,7 @@ export default async function LoginPage({
 
         <button
           type="submit"
-          className="gold-gradient flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-extrabold uppercase tracking-wide text-[#0a0a0a] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(220,185,127,0.25)] active:translate-y-0"
+          className="btn-gold flex items-center justify-center gap-2"
         >
           Sign in
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">

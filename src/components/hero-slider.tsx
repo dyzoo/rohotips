@@ -21,10 +21,12 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
   if (total === 0) return null;
 
   const go = (next: number) => setIndex(((next % total) + total) % total);
+  const counter = String(index + 1).padStart(2, "0");
+  const last = String(total).padStart(2, "0");
 
   return (
     <div
-      className="relative mb-6 overflow-hidden rounded-3xl border border-white/10 bg-[#1a1a1a] shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)]"
+      className="hero-frame mb-7"
       onTouchStart={(event) => {
         touchStart.current = event.touches[0].clientX;
       }}
@@ -40,10 +42,10 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
       >
         {slides.map((slide) => (
           <div key={slide.id} className="w-full shrink-0">
-            <Link href={slide.link} className="relative block aspect-video w-full">
+            <Link href={slide.link} className="relative block aspect-video w-full" aria-label="Open promotion">
               <Image
                 src={slide.image}
-                alt="ChampeeTips promotion"
+                alt="Promotion"
                 fill
                 sizes="(max-width: 500px) 100vw, 500px"
                 className="object-cover"
@@ -55,37 +57,27 @@ export function HeroSlider({ slides }: { slides: Slider[] }) {
         ))}
       </div>
 
+      <div className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 border border-gold/40 bg-black/65 px-2.5 py-1.5">
+        <span className="num text-xs font-bold text-gold">{counter}</span>
+        <span className="h-3 w-px bg-gold/40" />
+        <span className="num text-[10px] text-white/60">{last}</span>
+      </div>
+
+      <span className="pointer-events-none absolute right-4 top-4 z-10 eyebrow !text-[8px] text-white/65">
+        Featured slip
+      </span>
+
       {total > 1 ? (
         <>
-          <button
-            type="button"
-            aria-label="Previous slide"
-            onClick={() => go(index - 1)}
-            className="absolute left-3 top-1/2 z-20 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white backdrop-blur transition hover:bg-black/80"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            aria-label="Next slide"
-            onClick={() => go(index + 1)}
-            className="absolute right-3 top-1/2 z-20 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white backdrop-blur transition hover:bg-black/80"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-2">
+          <div className="absolute inset-x-4 bottom-4 z-10 flex items-center gap-1.5">
             {slides.map((slide, dotIndex) => (
               <button
                 key={slide.id}
                 type="button"
                 aria-label={`Go to slide ${dotIndex + 1}`}
                 onClick={() => go(dotIndex)}
-                className={`h-2 rounded-full transition-all ${
-                  dotIndex === index ? "w-6 bg-gold shadow-[0_0_8px_rgba(220,185,127,0.6)]" : "w-2 bg-white/30"
+                className={`h-[3px] flex-1 transition-all ${
+                  dotIndex === index ? "bg-gold" : "bg-white/25 hover:bg-white/50"
                 }`}
               />
             ))}

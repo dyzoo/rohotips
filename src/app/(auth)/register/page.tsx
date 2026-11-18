@@ -21,7 +21,7 @@ export default async function RegisterPage({
   return (
     <ModernAuthShell
       title="Create account"
-      subtitle="Join ChampeeTips and get daily winning tips delivered."
+      subtitle="          Join the desk and get daily winning tips delivered."
       footer={
         <>
           Already have an account?{" "}
@@ -59,7 +59,7 @@ export default async function RegisterPage({
               type="text"
               name="username"
               placeholder="John Doe"
-              className="modern-input pl-11"
+              className="field pl-11"
               autoComplete="name"
               required
             />
@@ -83,7 +83,7 @@ export default async function RegisterPage({
               type="email"
               name="email"
               placeholder="you@example.com"
-              className="modern-input pl-11"
+              className="field pl-11"
               autoComplete="email"
               required
             />
@@ -107,7 +107,7 @@ export default async function RegisterPage({
               type="tel"
               name="phone"
               placeholder="+255 700 000000"
-              className="modern-input pl-11"
+              className="field pl-11"
               autoComplete="tel"
               required
             />
@@ -130,7 +130,7 @@ export default async function RegisterPage({
               name="password"
               id="password"
               placeholder="At least 6 characters"
-              className="modern-input pl-11 pr-12"
+              className="field pl-11 pr-12"
               toggleClassName="right-4 text-white/35 transition hover:text-white"
             />
           </div>
@@ -152,7 +152,7 @@ export default async function RegisterPage({
               name="confirm_password"
               id="confirm_password"
               placeholder="Repeat your password"
-              className="modern-input pl-11 pr-12"
+              className="field pl-11 pr-12"
               toggleClassName="right-4 text-white/35 transition hover:text-white"
             />
           </div>
@@ -160,7 +160,7 @@ export default async function RegisterPage({
 
         <button
           type="submit"
-          className="gold-gradient flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-extrabold uppercase tracking-wide text-[#0a0a0a] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(220,185,127,0.25)] active:translate-y-0"
+          className="btn-gold flex items-center justify-center gap-2"
         >
           Create account
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">

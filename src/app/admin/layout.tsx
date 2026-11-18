@@ -12,29 +12,34 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-ink">
-      <header className="border-b border-white/10 bg-black/60">
+      <header className="masthead">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4">
-          <Link href="/admin" className="flex items-center gap-2">
-            <Image src="/roho_logo.jpg" width={45} height={30} alt="ChampeeTips logo" unoptimized />
-            <span className="page-title">CHAMPEETIPS ADMIN</span>
+          <Link href="/admin" className="flex items-center gap-3">
+            <span className="grid h-9 w-11 place-items-center border border-gold/35 bg-black/50">
+              <Image src="/roho_logo.jpg" width={44} height={30} alt="Site logo" unoptimized />
+            </span>
+            <span>
+              <span className="page-title block">Control room</span>
+              <span className="eyebrow mt-0.5 block !text-[8px] text-white/35">Admin / Operations</span>
+            </span>
           </Link>
-          <div className="flex items-center gap-3 text-xs">
-            <span className="hidden text-[#888] sm:inline">{user.email}</span>
-            <Link href="/" className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-bold text-white/70 transition hover:text-gold">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest">
+            <span className="hidden text-white/35 sm:inline">{user.email}</span>
+            <Link href="/" className="border border-white/15 px-3 py-2 text-white/70 transition hover:border-gold/45 hover:text-gold">
               View site
             </Link>
             <form action={logoutAction}>
               <input type="hidden" name="csrf" value={csrf} />
               <button
                 type="submit"
-                className="rounded-full border border-red-500/25 bg-red-500/5 px-3 py-1.5 font-bold text-red-300 transition hover:bg-red-500/10"
+                className="border border-red-500/25 px-3 py-2 font-bold text-red-300 transition hover:bg-red-500/10"
               >
                 Log out
               </button>
             </form>
           </div>
         </div>
-        <div className="mx-auto max-w-6xl px-5 pb-4">
+        <div className="mx-auto max-w-6xl px-5 pb-3">
           <AdminNav />
         </div>
       </header>

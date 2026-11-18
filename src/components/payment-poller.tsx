@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import { orderStatusAction } from "@/app/actions";
 
 const styles: Record<string, string> = {
-  pending: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
-  paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  failed: "bg-red-500/15 text-red-300 border-red-500/30",
-  cancelled: "bg-white/10 text-white/60 border-white/20",
+  pending: "border-yellow-500/35 bg-yellow-500/10 text-yellow-300",
+  paid: "border-emerald-500/35 bg-emerald-500/10 text-emerald-300",
+  failed: "border-red-500/35 bg-red-500/10 text-red-300",
+  cancelled: "border-white/20 bg-white/5 text-white/60",
 };
 
 export function PaymentPoller({ orderId, initialStatus }: { orderId: string; initialStatus: string }) {
@@ -30,7 +30,7 @@ export function PaymentPoller({ orderId, initialStatus }: { orderId: string; ini
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wide ${
+      className={`inline-flex items-center border px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${
         styles[status] ?? styles.pending
       }`}
     >

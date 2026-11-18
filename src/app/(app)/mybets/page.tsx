@@ -20,28 +20,35 @@ export default async function MyBetsPage() {
 
   return (
     <div className="animate-enter">
-      <h1 className="mb-1 text-2xl font-extrabold text-white">My Bets</h1>
-      <p className="mb-6 text-xs text-[#888]">Betslips you have unlocked and pending payments.</p>
+      <p className="eyebrow">Account / Ledger</p>
+      <h1 className="mt-1 text-2xl font-black uppercase tracking-tight text-white">My bets</h1>
+      <p className="mb-6 mt-1 text-xs text-white/40">Betslips you have unlocked and pending payments.</p>
 
-      <div className="mb-6 grid grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
-          <p className="text-xl font-black text-gold">{paid.length}</p>
-          <p className="text-[10px] uppercase tracking-widest text-[#888]">Unlocked</p>
+      <div className="mb-8 grid grid-cols-3 border-y border-gold/20">
+        <div className="border-r border-white/[0.07] px-2 py-4 text-center">
+          <p className="num text-xl font-bold text-gold">{String(paid.length).padStart(2, "0")}</p>
+          <p className="eyebrow mt-1 !text-[8px] text-white/35">Unlocked</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
-          <p className="text-xl font-black text-gold">{pending.length}</p>
-          <p className="text-[10px] uppercase tracking-widest text-[#888]">Pending</p>
+        <div className="border-r border-white/[0.07] px-2 py-4 text-center">
+          <p className="num text-xl font-bold text-gold">{String(pending.length).padStart(2, "0")}</p>
+          <p className="eyebrow mt-1 !text-[8px] text-white/35">Pending</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
-          <p className="text-xl font-black text-gold">{money(paid.reduce((sum, order) => sum + order.amount, 0))}</p>
-          <p className="text-[10px] uppercase tracking-widest text-[#888]">Spent</p>
+        <div className="px-2 py-4 text-center">
+          <p className="num text-lg font-bold text-gold">{money(paid.reduce((sum, order) => sum + order.amount, 0))}</p>
+          <p className="eyebrow mt-1 !text-[8px] text-white/35">Spent</p>
         </div>
       </div>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-widest text-gold">Unlocked betslips</h2>
+        <div className="section-head">
+          <div>
+            <p className="eyebrow">Section 01</p>
+            <h2>Unlocked slips</h2>
+          </div>
+          <span className="count-badge">{String(paid.length).padStart(2, "0")}</span>
+        </div>
         {paid.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-6 text-center text-sm text-[#888]">
+          <div className="panel-plain p-6 text-center text-sm text-white/40">
             You have not unlocked any betslip yet.{" "}
             <Link href="/" className="font-bold text-gold">
               Browse tips
@@ -52,27 +59,26 @@ export default async function MyBetsPage() {
             {paid.map((order) => {
               const slip = slips.get(order.slipId);
               return (
-                <Link
-                  key={order.id}
-                  href={`/betslip/${order.slipId}`}
-                  className="block rounded-2xl border border-white/10 bg-[#121212] p-4 transition hover:border-gold/40"
-                >
+                <Link key={order.id} href={`/betslip/${order.slipId}`} className="ticket block px-4 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-extrabold text-white">{slip?.title ?? order.slipId}</p>
-                      <p className="mt-1 text-[11px] text-[#888]">
-                        {order.method} &bull; {dateLabel(order.paidAt ?? order.createdAt)}
+                      <p className="truncate text-sm font-extrabold uppercase tracking-wide text-white">
+                        {slip?.title ?? order.slipId}
+                      </p>
+                      <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
+                        {order.method} / {dateLabel(order.paidAt ?? order.createdAt)}
                       </p>
                     </div>
-                    <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-300">
+                    <span className="tag !border-emerald-500/35 !bg-emerald-500/[0.08] !text-emerald-300">
                       Paid
                     </span>
                   </div>
-                  <div className="mt-3 flex items-center justify-between gap-3 text-xs">
-                    <span className="text-[#888]">
+                  <div className="ticket-divider" />
+                  <div className="flex items-center justify-between gap-3 font-mono text-[11px]">
+                    <span className="text-white/40">
                       {slip ? <Countdown validity={slip.validity} /> : "Expired"}
                     </span>
-                    <span className="font-mono font-bold tracking-widest text-gold">{slip?.code ?? "—"}</span>
+                    <span className="font-bold tracking-widest text-gold">{slip?.code ?? "—"}</span>
                   </div>
                 </Link>
               );
@@ -82,28 +88,30 @@ export default async function MyBetsPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-widest text-gold">Pending payments</h2>
-        {pending.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-6 text-center text-sm text-[#888]">
-            No pending payments.
+        <div className="section-head">
+          <div>
+            <p className="eyebrow">Section 02</p>
+            <h2>Pending payments</h2>
           </div>
+          <span className="count-badge">{String(pending.length).padStart(2, "0")}</span>
+        </div>
+        {pending.length === 0 ? (
+          <div className="panel-plain p-6 text-center text-sm text-white/40">No pending payments.</div>
         ) : (
           <div className="space-y-3">
             {pending.map((order) => (
-              <Link
-                key={order.id}
-                href={`/checkout/${order.id}`}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#121212] p-4 transition hover:border-gold/40"
-              >
-                <div>
-                  <p className="text-sm font-extrabold text-white">{money(order.amount)}</p>
-                  <p className="mt-1 text-[11px] text-[#888]">
-                    {order.method} &bull; {order.reference}
-                  </p>
+              <Link key={order.id} href={`/checkout/${order.id}`} className="ticket block px-4 py-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="num text-lg font-bold text-white">{money(order.amount)}</p>
+                    <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
+                      {order.method} / {order.reference}
+                    </p>
+                  </div>
+                  <span className="tag !border-yellow-500/35 !bg-yellow-500/[0.08] !text-yellow-300">
+                    Pending
+                  </span>
                 </div>
-                <span className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-yellow-300">
-                  Pending
-                </span>
               </Link>
             ))}
           </div>

@@ -11,28 +11,36 @@ export function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <div className="auth-glow flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-md">
         {backHref ? (
           <Link
             href={backHref}
-            className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-800 text-gray-400 transition hover:bg-gray-900"
+            className="mb-5 inline-flex h-9 w-9 items-center justify-center border border-gold/30 text-gold transition hover:bg-gold/10"
             aria-label="Back"
           >
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" />
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M19 12H5M12 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
         ) : null}
-        <div className="mb-8">
-          <div className="mb-6 flex items-center gap-3">
-            <Image src="/roho_logo.jpg" height={32} width={48} alt="ChampeeTips logo" unoptimized />
-            <span className="text-xl font-light tracking-wide text-white/90">CHAMPEETIPS</span>
+
+        <div className="auth-panel px-6 py-8 sm:px-8">
+          <div className="mb-8 flex items-center gap-3 border-b border-white/[0.08] pb-6">
+            <Image src="/roho_logo.jpg" height={30} width={46} alt="Site logo" unoptimized />
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/70">
+              Account recovery
+            </span>
           </div>
-          <h1 className="gold-text mb-2 text-4xl font-light tracking-wide">{title}</h1>
+          <p className="eyebrow mb-2">Secure / {title}</p>
+          <h1 className="text-3xl font-black tracking-tight text-white">{title}</h1>
+
+          <div className="mt-7">{children}</div>
         </div>
-        {children}
-        <div className="mt-12 text-center text-xs uppercase tracking-widest text-white/30">Secure Login</div>
+
+        <p className="mt-6 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/25">
+          Encrypted session
+        </p>
       </div>
     </div>
   );

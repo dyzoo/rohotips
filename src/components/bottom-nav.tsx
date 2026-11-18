@@ -7,31 +7,32 @@ const items = [
   {
     href: "/",
     label: "Home",
+    code: "01",
     icon: (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" />
+        <path d="M9 21V12h6v9" />
       </svg>
     ),
   },
   {
     href: "/mybets",
     label: "My Bets",
+    code: "02",
     icon: (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 3h14v18l-7-4-7 4z" />
+        <path d="M9 8h6M9 12h6" />
       </svg>
     ),
   },
   {
     href: "/profile",
     label: "Profile",
+    code: "03",
     icon: (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 21v-2a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v2" />
         <circle cx="12" cy="7" r="4" />
       </svg>
     ),
@@ -47,14 +48,10 @@ export function BottomNav() {
         {items.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
-            <li key={item.href} className="relative flex-1">
-              <Link
-                href={item.href}
-                className={`nav-link relative flex h-full w-full flex-col items-center justify-center text-[#666] transition ${
-                  active ? "active" : ""
-                }`}
-              >
-                <span className="nav-icon mt-1 flex items-center justify-center">{item.icon}</span>
+            <li key={item.href} className="flex-1 border-r border-white/[0.06] last:border-r-0">
+              <Link href={item.href} className={`nav-link ${active ? "active" : ""}`} aria-current={active ? "page" : undefined}>
+                <span className="absolute right-3 top-2 font-mono text-[8px] tracking-widest opacity-45">{item.code}</span>
+                {item.icon}
                 <span className="nav-text">{item.label}</span>
               </Link>
             </li>

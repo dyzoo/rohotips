@@ -19,14 +19,15 @@ export default async function AdminSlipsPage({
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="section-head">
         <div>
-          <h1 className="text-2xl font-extrabold text-white">Betslips</h1>
-          <p className="text-xs text-[#888]">{slips.length} total</p>
+          <p className="eyebrow">Inventory / Slips</p>
+          <h2>Betslips</h2>
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">{slips.length} total</p>
         </div>
         <Link
           href="/admin/slips/new"
-          className="gold-gradient rounded-full px-4 py-2 text-[11px] font-extrabold uppercase tracking-wide text-black"
+          className="border border-gold/40 bg-gold/[0.07] px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold/15"
         >
           New betslip
         </Link>
@@ -34,7 +35,7 @@ export default async function AdminSlipsPage({
 
       {saved ? <p className="alert-success mb-5">Betslip {saved}.</p> : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#121212]">
+      <div className="panel overflow-x-auto">
         <table className="admin-table min-w-[820px]">
           <thead>
             <tr>
@@ -50,7 +51,7 @@ export default async function AdminSlipsPage({
           <tbody>
             {slips.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-10 text-center text-[#888]">
+                <td colSpan={7} className="py-10 text-center text-white/40">
                   No betslips yet.
                 </td>
               </tr>
@@ -61,15 +62,15 @@ export default async function AdminSlipsPage({
                   <tr key={slip.id}>
                     <td>
                       <p className="font-bold text-white">{slip.title}</p>
-                      <p className="font-mono text-[10px] text-[#888]">{slip.code}</p>
+                      <p className="font-mono text-[10px] text-white/40">{slip.code}</p>
                     </td>
                     <td className="text-white/70">{slip.category}</td>
                     <td className="font-bold text-gold">{slip.odds.toFixed(2)}</td>
                     <td className="text-white/80">{money(slip.price)}</td>
-                    <td className="text-xs text-[#888]">{dateLabel(slip.validity)}</td>
+                    <td className="text-xs text-white/40">{dateLabel(slip.validity)}</td>
                     <td>
                       <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                        className={`border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${
                           slip.status === "inactive"
                             ? "bg-white/10 text-white/50"
                             : expired
@@ -84,7 +85,7 @@ export default async function AdminSlipsPage({
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/admin/slips/${slip.id}/edit`}
-                          className="rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-bold text-white/70 hover:border-gold/40 hover:text-gold"
+                          className="border border-white/15 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-white/70 hover:border-gold/40 hover:text-gold"
                         >
                           Edit
                         </Link>
@@ -93,7 +94,7 @@ export default async function AdminSlipsPage({
                           <input type="hidden" name="id" value={slip.id} />
                           <button
                             type="submit"
-                            className="rounded-lg border border-red-500/20 px-3 py-1.5 text-[11px] font-bold text-red-300 hover:bg-red-500/10"
+                            className="border border-red-500/20 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-red-300 hover:bg-red-500/10"
                           >
                             Delete
                           </button>

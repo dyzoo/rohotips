@@ -19,12 +19,13 @@ export default async function AdminUsersPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-extrabold text-white">Users</h1>
-      <p className="mb-6 text-xs text-[#888]">{users.length} registered accounts</p>
+      <p className="eyebrow">Accounts / Members</p>
+      <h1 className="mt-1 text-2xl font-black uppercase tracking-tight text-white">Users</h1>
+      <p className="mb-6 mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">{users.length} registered accounts</p>
 
       {saved ? <p className="alert-success mb-5">User role updated.</p> : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#121212]">
+      <div className="panel overflow-x-auto">
         <table className="admin-table min-w-[760px]">
           <thead>
             <tr>
@@ -44,10 +45,10 @@ export default async function AdminUsersPage({
                 <td className="text-white/70">{user.email}</td>
                 <td className="text-white/70">{user.phone}</td>
                 <td className="text-white/70">{orders.filter((order) => order.userId === user.id).length}</td>
-                <td className="text-xs text-[#888]">{dateLabel(user.createdAt)}</td>
+                <td className="text-xs text-white/40">{dateLabel(user.createdAt)}</td>
                 <td>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                    className={`border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${
                       user.role === "admin" ? "bg-gold/15 text-gold" : "bg-white/10 text-white/60"
                     }`}
                   >
@@ -60,7 +61,7 @@ export default async function AdminUsersPage({
                     <input type="hidden" name="id" value={user.id} />
                     <button
                       type="submit"
-                      className="rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-bold text-white/70 hover:border-gold/40 hover:text-gold"
+                      className="border border-white/15 px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-white/70 hover:border-gold/40 hover:text-gold"
                     >
                       Make {user.role === "admin" ? "user" : "admin"}
                     </button>

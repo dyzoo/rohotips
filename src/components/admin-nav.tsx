@@ -15,18 +15,15 @@ export function AdminNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-wrap gap-2">
+    <nav className="admin-nav -mb-4">
       {links.map((link) => {
         const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href);
         return (
           <Link
             key={link.href}
             href={link.href}
-            className={`rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wide transition ${
-              active
-                ? "border-gold bg-gold text-black"
-                : "border-white/10 bg-white/5 text-white/70 hover:border-gold/40 hover:text-white"
-            }`}
+            className={active ? "active" : undefined}
+            aria-current={active ? "page" : undefined}
           >
             {link.label}
           </Link>

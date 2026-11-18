@@ -44,49 +44,53 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <p className="eyebrow">Daily briefing / {new Date().getFullYear()}</p>
+          <h1 className="mt-1 text-[26px] font-black uppercase leading-none tracking-tight text-white">
+            The <span className="gold-text">tip desk</span>
+          </h1>
+        </div>
+        <span className="num hidden text-[10px] tracking-widest text-white/30 sm:block">TZ / EAT</span>
+      </div>
+
       <HeroSlider slides={sliders} />
 
       {settings.announcement ? (
-        <p className="mb-5 rounded-2xl border border-gold/20 bg-gold/5 px-4 py-3 text-xs leading-relaxed text-gold/90">
-          {settings.announcement}
-        </p>
+        <div className="mb-6 flex items-start gap-3 border-l-2 border-gold bg-gold/[0.05] px-3 py-3">
+          <span className="live-indicator mt-1" />
+          <p className="text-[12px] leading-relaxed text-gold/90">{settings.announcement}</p>
+        </div>
       ) : null}
 
-      <div className="mb-5 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="live-indicator" />
-          <h2 className="text-lg font-bold uppercase tracking-wide text-white">Active Betslips</h2>
+      <div className="section-head">
+        <div>
+          <p className="eyebrow">Section 01 / Open now</p>
+          <h2>Active betslips</h2>
         </div>
-        <span
-          id="liveCount"
-          className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-xs text-gold shadow-[0_0_8px_rgba(220,185,127,0.2)]"
-        >
-          {slips.length} Live
-        </span>
+        <span className="count-badge">{String(slips.length).padStart(2, "0")} live</span>
       </div>
 
       <div id="tipsContainer">
         {slips.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[#333] bg-[#111] px-5 py-14 text-center text-[#888]">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="#B0B0B0" className="mx-auto mb-4 opacity-60">
-              <path d="M22.784 14.447L19.903 8.074C19.618 7.466 18.993 7 18.361 7H11V5H5C3.895 5 3 5.895 3 7v10c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2v-2h3c1.105 0 2-.895 2-2v-2c0-.449-.551-1-.216.447zM19 17H5V7h6v2h7.361l2.882 6.374L19 17z" />
-            </svg>
-            <p className="text-[15px]">
+          <div className="panel-plain px-5 py-14 text-center">
+            <p className="eyebrow mb-3">Desk closed</p>
+            <p className="text-[15px] text-white/45">
               No active betslips at the moment.
               <br />
               Check back later!
             </p>
           </div>
         ) : (
-          slips.map((slip) => (
-            <BetslipCard key={slip.id} slip={slip} siteName={settings.siteName} logos={logos} />
+          slips.map((slip, index) => (
+            <BetslipCard key={slip.id} slip={slip} siteName={settings.siteName} logos={logos} index={index} />
           ))
         )}
       </div>
 
-      <p className="mt-8 text-center text-[11px] leading-relaxed text-white/30">
-        Betting involves risk. Play responsibly and only with money you can afford to lose.{" "}
-        <Link href="/support" className="text-gold/70 hover:text-gold">
+      <p className="mt-8 border-t border-white/[0.07] pt-5 text-center font-mono text-[10px] leading-relaxed tracking-wide text-white/30">
+        Betting involves risk. Play responsibly.{" "}
+        <Link href="/support" className="text-gold/80 hover:text-gold">
           Need help?
         </Link>
       </p>

@@ -28,40 +28,43 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-extrabold text-white">Dashboard</h1>
-      <p className="mb-6 text-xs text-[#888]">Overview of ChampeeTips performance.</p>
+      <p className="eyebrow">Overview / Live</p>
+      <h1 className="mt-1 text-2xl font-black uppercase tracking-tight text-white">Dashboard</h1>
+      <p className="mb-6 mt-1 text-xs text-white/40">Operations at a glance.</p>
 
       <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Link
-            key={stat.label}
-            href={stat.href}
-            className="rounded-2xl border border-white/10 bg-[#121212] p-5 transition hover:border-gold/40"
-          >
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#888]">{stat.label}</p>
-            <p className="mt-2 text-2xl font-black text-gold">{stat.value}</p>
+        {stats.map((stat, index) => (
+          <Link key={stat.label} href={stat.href} className="panel p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="eyebrow !text-[9px] text-white/40">{stat.label}</p>
+              <span className="num text-[10px] text-gold/50">{String(index + 1).padStart(2, "0")}</span>
+            </div>
+            <p className="num text-2xl font-bold text-gold">{stat.value}</p>
           </Link>
         ))}
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-gold">Recent orders</h2>
-        <div className="flex gap-2">
+      <div className="section-head">
+        <div>
+          <p className="eyebrow">Section 01</p>
+          <h2>Recent orders</h2>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/admin/slips/new"
-            className="gold-gradient rounded-full px-4 py-2 text-[11px] font-extrabold uppercase tracking-wide text-black"
+            className="border border-gold/40 bg-gold/[0.07] px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-gold transition hover:bg-gold/15"
           >
             New betslip
           </Link>
           {pendingOrders.length > 0 ? (
-            <span className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-[11px] font-bold text-yellow-300">
+            <span className="tag !border-yellow-500/35 !bg-yellow-500/[0.08] !text-yellow-300">
               {pendingOrders.length} pending
             </span>
           ) : null}
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#121212]">
+      <div className="panel overflow-x-auto">
         <table className="admin-table min-w-[720px]">
           <thead>
             <tr>
@@ -76,19 +79,19 @@ export default async function AdminDashboard() {
           <tbody>
             {recent.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-[#888]">
+                <td colSpan={6} className="py-10 text-center text-white/40">
                   No orders yet.
                 </td>
               </tr>
             ) : (
               recent.map((order) => (
                 <tr key={order.id}>
-                  <td className="font-mono text-xs text-white">{order.reference}</td>
-                  <td className="text-white/80">{users.get(order.userId)?.email ?? order.userId}</td>
-                  <td className="text-white/80">{slips.get(order.slipId)?.title ?? order.slipId}</td>
-                  <td className="font-bold text-gold">{money(order.amount)}</td>
-                  <td className="uppercase text-white/70">{order.status}</td>
-                  <td className="text-xs text-[#888]">{dateLabel(order.createdAt)}</td>
+                  <td className="num text-xs text-white">{order.reference}</td>
+                  <td className="text-white/70">{users.get(order.userId)?.email ?? order.userId}</td>
+                  <td className="text-white/70">{slips.get(order.slipId)?.title ?? order.slipId}</td>
+                  <td className="num font-bold text-gold">{money(order.amount)}</td>
+                  <td className="font-mono text-[10px] uppercase tracking-widest text-white/60">{order.status}</td>
+                  <td className="text-xs text-white/40">{dateLabel(order.createdAt)}</td>
                 </tr>
               ))
             )}
