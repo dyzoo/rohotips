@@ -131,7 +131,7 @@ export default async function BetslipPage({
             <span className="num text-xl font-bold text-gold">{money(slip.price)}</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-white/45">
-            Lipia {money(slip.price)} kupata booking code kamili. Payment is handled securely via M-Pesa.
+            Lipia {money(slip.price)} kupata booking code kamili.
           </p>
 
           {user ? (
